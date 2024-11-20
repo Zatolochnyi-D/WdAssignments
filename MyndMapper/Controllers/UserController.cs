@@ -12,7 +12,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult CreateUser(UserModel userModel)
     {
-        UserAccount.CreateUser(userModel);
+        Objects.User.CreateUser(userModel);
         return Ok();
     }
 
@@ -21,10 +21,10 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<UserModel> GetUser(int id)
     {
-        UserAccount user;
+        User user;
         try
         {
-            user = UserAccount.GetUserById(id);
+            user = Objects.User.GetUserById(id);
         }
         catch (ArgumentException)
         {
@@ -37,7 +37,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<UserModel[]> GetAllUsers()
     {
-        UserAccount[] users = UserAccount.GetAllUsers();
+        User[] users = Objects.User.GetAllUsers();
         List<UserModel> userModels = [];
         foreach (var user in users)
         {
@@ -51,10 +51,10 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult EditUser(int id, UserModel userModel)
     {
-        UserAccount user;
+        User user;
         try
         {
-            user = UserAccount.GetUserById(id);
+            user = Objects.User.GetUserById(id);
         }
         catch (ArgumentException)
         {
@@ -71,12 +71,12 @@ public class UserController : ControllerBase
     {
         try
         {
-            UserAccount user = UserAccount.GetUserById(id);
+            User user = Objects.User.GetUserById(id);
             foreach (var canvasId in user.CreatedCanvases)
             {
                 Canvas.DeleteCanvasById(canvasId);
             }
-            UserAccount.DeleteUserById(id);
+            Objects.User.DeleteUserById(id);
             return NoContent();
         }
         catch (ArgumentException)

@@ -13,10 +13,10 @@ public class CanvasController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult CreateCanvas(int creatorId, CanvasModel canvasModel)
     {
-        UserAccount user;
+        User user;
         try
         {
-            user = UserAccount.GetUserById(creatorId);
+            user = Objects.User.GetUserById(creatorId);
         }
         catch (ArgumentException)
         {
@@ -50,10 +50,10 @@ public class CanvasController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<CanvasModel[]> GetCanvasesOfUser(int id)
     {
-        UserAccount user;
+        User user;
         try
         {
-            user = UserAccount.GetUserById(id);
+            user = Objects.User.GetUserById(id);
         }
         catch (ArgumentException)
         {
@@ -107,7 +107,7 @@ public class CanvasController : ControllerBase
         try
         {
             Canvas canvas = Canvas.GetCanvasById(id);
-            UserAccount.GetUserById(canvas.OwnerId).CreatedCanvases.Remove(id);
+            Objects.User.GetUserById(canvas.OwnerId).CreatedCanvases.Remove(id);
             Canvas.DeleteCanvasById(id);
             return NoContent();
         }

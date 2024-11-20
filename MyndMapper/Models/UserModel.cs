@@ -5,7 +5,7 @@ namespace MyndMapper.Models;
 
 public class UserModel
 {
-    public static UserModel CreateFromUser(UserAccount user)
+    public static UserModel CreateFromUser(User user)
     {
         UserModel userModel = new()
         {
