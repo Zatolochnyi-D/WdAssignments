@@ -1,6 +1,6 @@
 using MyndMapper.Entities;
 
-namespace MyndMapper.Storages;
+namespace MyndMapper.Storages.UserStorage;
 
 public interface IUserStorage
 {
