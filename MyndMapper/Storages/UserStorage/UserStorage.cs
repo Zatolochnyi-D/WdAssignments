@@ -1,9 +1,8 @@
 using MyndMapper.Entities;
-using MyndMapper.Storages.CanvasStorage;
 
 namespace MyndMapper.Storages.UserStorage;
 
-public class UserStorage(ICanvasStorage canvasStorage) : IUserStorage
+public class UserStorage : IUserStorage
 {
     private readonly List<User?> users = [];
 
@@ -66,15 +65,11 @@ public class UserStorage(ICanvasStorage canvasStorage) : IUserStorage
         }
     }
 
+    // TODO Should remove it's canvases, as they no longer have an owner.
     public void Remove(int id)
     {
         if (IsValidId(id))
         {
-            int[] ids = users[id]!.CreatedCanvases.ToArray();
-            foreach (var canvasId in ids)
-            {
-                canvasStorage.Remove(canvasId);
-            }
             users[id] = null;
         }
         else

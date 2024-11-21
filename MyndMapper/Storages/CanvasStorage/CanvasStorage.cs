@@ -1,9 +1,8 @@
 using MyndMapper.Entities;
-using MyndMapper.Storages.UserStorage;
 
 namespace MyndMapper.Storages.CanvasStorage;
 
-public class CanvasStorage(IUserStorage userStorage) : ICanvasStorage
+public class CanvasStorage : ICanvasStorage
 {
     private readonly List<Canvas?> canvases = [];
 
@@ -38,10 +37,9 @@ public class CanvasStorage(IUserStorage userStorage) : ICanvasStorage
     }
 
     // TODO No checks provided. Any input data will be acceptable.
+    // TODO Should add this id for creator user.
     public void Create(int creatorId, Canvas canvas)
     {
-        User user = userStorage.Get(creatorId);
-
         for (int i = 0; i < canvases.Count; i++)
         {
             if (canvases[i] == null)
@@ -53,7 +51,6 @@ public class CanvasStorage(IUserStorage userStorage) : ICanvasStorage
         }
         canvases.Add(canvas);
         canvas.Id = canvases.Count - 1;
-        user.CreatedCanvases.Add(canvas.Id);
     }
 
     public void Edit(int id, Canvas canvas)
@@ -68,11 +65,11 @@ public class CanvasStorage(IUserStorage userStorage) : ICanvasStorage
         }
     }
 
+    // TODO Should remove it's id from owner.
     public void Remove(int id)
     {
         if (IsValidId(id))
         {
-            userStorage.Get(canvases[id]!.OwnerId).CreatedCanvases.Remove(id);
             canvases[id] = null;
         }
         else
