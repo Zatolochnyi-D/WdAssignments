@@ -1,8 +1,9 @@
 using MyndMapper.Entities;
+using MyndMapper.Storages.UserStorage;
 
 namespace MyndMapper.Storages.CanvasStorage;
 
-public class CanvasStorage : ICanvasStorage
+public class CanvasStorage(IUserStorage userStorage) : ICanvasStorage
 {
     private readonly List<Canvas?> canvases = [];
 
@@ -40,6 +41,8 @@ public class CanvasStorage : ICanvasStorage
     // TODO User and Canvas are not connected. Canvas have an owner ID, but user does not have created canvases IDs.
     public void Create(int creatorId, Canvas canvas)
     {
+        User user = userStorage.Get(creatorId);
+
         for (int i = 0; i < canvases.Count; i++)
         {
             if (canvases[i] == null)
@@ -51,6 +54,7 @@ public class CanvasStorage : ICanvasStorage
         }
         canvases.Add(canvas);
         canvas.Id = canvases.Count - 1;
+        user.CreatedCanvases.Add(canvas.Id);
     }
 
     public void Edit(int id, Canvas canvas)
@@ -69,6 +73,7 @@ public class CanvasStorage : ICanvasStorage
     {
         if (IsValidId(id))
         {
+            userStorage.Get(canvases[id]!.OwnerId).CreatedCanvases.Remove(id);
             canvases[id] = null;
         }
         else
