@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using MyndMapper.Configurations.Services;
+
 namespace MyndMapper;
 
 public class Program
@@ -12,6 +15,7 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddUser();
         builder.Services.AddCanvas();
+        builder.Services.AddDbContext<DataModelContext>(contextOptions => contextOptions.UseSqlite("Data source=sample.db"));
 
         var app = builder.Build();
 
