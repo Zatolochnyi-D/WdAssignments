@@ -1,8 +1,9 @@
 using MyndMapper.Entities;
+using MyndMapper.Storages.CanvasStorage;
 
 namespace MyndMapper.Storages.UserStorage;
 
-public class UserStorage : IUserStorage
+public class UserStorage(ICanvasStorage canvasStorage) : IUserStorage
 {
     private readonly List<User?> users = [];
 
@@ -69,6 +70,11 @@ public class UserStorage : IUserStorage
     {
         if (IsValidId(id))
         {
+            int[] ids = users[id]!.CreatedCanvases.ToArray();
+            foreach (var canvasId in ids)
+            {
+                canvasStorage.Remove(canvasId);
+            }
             users[id] = null;
         }
         else
