@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using MyndMapper.Entities;
-using MyndMapper.Objects;
 
 namespace MyndMapper.Controllers;
 
