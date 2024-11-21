@@ -1,75 +1,81 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MyndMapper.Entities;
-using MyndMapper.Storages.UserStorage;
 
 namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("users/")]
-public class UserController(IUserStorage userStorage, DataModelContext context) : ControllerBase
+public class UserController(DataModelContext context) : ControllerBase
 {
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<User> Get(int id)
+    public async Task<ActionResult> Get(int id)
     {
-        User user;
-        try
-        {
-            user = userStorage.Get(id);
-        }
-        catch (ArgumentException)
+        User? user = await context.Users.FindAsync(id);
+        if (user == null)
         {
             return NotFound();
         }
-        return Ok(user);
+        else
+        {
+            return Ok(user);
+        }
     }
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<User>> GetAll()
+    public async Task<ActionResult> GetAll()
     {
-        IEnumerable<User> users = userStorage.GetAll();
+        IEnumerable<User> users = await context.Users.AsNoTracking().ToListAsync();
         return Ok(users);
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public ActionResult Create(User user)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> Create(User user)
     {
-        userStorage.Create(user);
-        return NoContent();
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+        return Ok();
     }
 
     [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult Edit(int id, User user)
+    public async Task<ActionResult> Edit(int id, User user)
     {
-        try
+        User? oldUser = await context.Users.FindAsync(id);
+        if (oldUser != null)
         {
-            userStorage.Edit(id, user);
+            oldUser.Name = user.Name;
+            oldUser.Email = user.Email;
+            oldUser.Password = user.Password;
+            await context.SaveChangesAsync();
+            return Ok();
         }
-        catch (ArgumentException)
+        else
         {
             return NotFound();
         }
-        return NoContent();
     }
 
     [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult Remove(int id)
+    public async Task<ActionResult> Remove(int id)
     {
-        try
+        User? user = await context.Users.FindAsync(id);
+        if (user != null)
         {
-            userStorage.Remove(id);
+            context.Users.Remove(user);
+            await context.SaveChangesAsync();
+            return Ok();
         }
-        catch (ArgumentException)
+        else
         {
             return NotFound();
         }
-        return NoContent();
     }
 }

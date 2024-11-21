@@ -1,24 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MyndMapper.Entities;
-using MyndMapper.Storages.CanvasStorage;
 
 namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("canvases/")]
-public class CanvasController(ICanvasStorage canvasStorage) : ControllerBase
+public class CanvasController(DataModelContext context) : ControllerBase
 {
     [HttpGet("canvasId={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Canvas> Get(int id)
+    public async Task<ActionResult> Get(int id)
     {
-        Canvas canvas;
-        try
-        {
-            canvas = canvasStorage.Get(id);
-        }
-        catch (ArgumentException)
+        Canvas? canvas = await context.Canvases.FindAsync(id);
+        if (canvas == null)
         {
             return NotFound();
         }
@@ -27,57 +23,55 @@ public class CanvasController(ICanvasStorage canvasStorage) : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<Canvas[]> GetAll()
+    public async Task<ActionResult> GetAll()
     {
-        IEnumerable<Canvas> canvases = canvasStorage.GetAll();
+        IEnumerable<Canvas> canvases = await context.Canvases.AsNoTracking().ToListAsync();
         return Ok(canvases);
     }
 
     [HttpPost("{creatorId}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult Create(int creatorId, Canvas canvas)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> Create(int creatorId, Canvas canvas)
     {
-        try
-        {
-            canvasStorage.Create(creatorId, canvas);
-        }
-        catch (ArgumentException)
-        {
-            return NotFound();
-        }
-        return NoContent();
+        canvas.OwnerId = creatorId;
+        context.Canvases.Add(canvas);
+        await context.SaveChangesAsync();
+        return Ok();
     }
 
     [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult Edit(int id, Canvas canvas)
+    public async Task<ActionResult> Edit(int id, Canvas canvas)
     {
-        try
+        Canvas? OldCanvas = await context.Canvases.FindAsync(id);
+        if (OldCanvas != null)
         {
-            canvasStorage.Edit(id, canvas);
+            OldCanvas.Name = canvas.Name;
+            await context.SaveChangesAsync();
+            return Ok();
         }
-        catch (ArgumentException)
+        else
         {
             return NotFound();
         }
-        return NoContent();
     }
 
     [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult Remove(int id)
+    public async Task<ActionResult> Remove(int id)
     {
-        try
+        Canvas? canvas = await context.Canvases.FindAsync(id);
+        if (canvas != null)
         {
-            canvasStorage.Remove(id);
+            context.Canvases.Remove(canvas);
+            await context.SaveChangesAsync();
+            return Ok();
         }
-        catch (ArgumentException)
+        else
         {
             return NotFound();
         }
-        return NoContent();
     }
 }
