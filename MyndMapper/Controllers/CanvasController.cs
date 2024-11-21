@@ -34,9 +34,9 @@ public class CanvasController(ICanvasStorage canvasStorage) : ControllerBase
     }
 
     [HttpPost("{creatorId}")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult CreateCanvas(int creatorId, Canvas canvas)
+    public ActionResult Create(int creatorId, Canvas canvas)
     {
         try
         {
@@ -46,13 +46,13 @@ public class CanvasController(ICanvasStorage canvasStorage) : ControllerBase
         {
             return NotFound();
         }
-        return Created();
+        return NoContent();
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult EditCanvas(int id, Canvas canvas)
+    public ActionResult Edit(int id, Canvas canvas)
     {
         try
         {

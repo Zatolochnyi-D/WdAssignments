@@ -34,11 +34,11 @@ public class UserController(IUserStorage userStorage) : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public ActionResult CreateUser(User user)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public ActionResult Create(User user)
     {
         userStorage.Create(user);
-        return Created();
+        return NoContent();
     }
 
     [HttpPut("{id}")]
