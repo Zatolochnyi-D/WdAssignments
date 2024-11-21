@@ -38,7 +38,6 @@ public class CanvasStorage(IUserStorage userStorage) : ICanvasStorage
     }
 
     // TODO No checks provided. Any input data will be acceptable.
-    // TODO User and Canvas are not connected. Canvas have an owner ID, but user does not have created canvases IDs.
     public void Create(int creatorId, Canvas canvas)
     {
         User user = userStorage.Get(creatorId);
