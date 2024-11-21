@@ -1,6 +1,3 @@
-using MyndMapper.Storages.CanvasStorage;
-using MyndMapper.Storages.UserStorage;
-
 namespace MyndMapper;
 
 public class Program
@@ -13,8 +10,8 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddSingleton<IUserStorage, UserStorage>();
-        builder.Services.AddSingleton<ICanvasStorage, CanvasStorage>();
+        builder.Services.AddUser();
+        builder.Services.AddCanvas();
 
         var app = builder.Build();
 
