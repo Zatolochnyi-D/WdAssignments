@@ -1,4 +1,4 @@
-using MyndMapper.Models;
+using MyndMapper.Entities;
 
 namespace MyndMapper.Objects;
 

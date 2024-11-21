@@ -1,20 +1,17 @@
-using MyndMapper.Models;
+using MyndMapper.Entities;
 
 namespace MyndMapper.Objects;
 
 public class CanvasStorage
 {
     private static readonly List<CanvasStorage?> canvases = [];
-    public static CanvasStorage CreateCanvas(Canvas canvasModel)
+
+    public static CanvasStorage CreateCanvas(int ownerId, Canvas canvasModel)
     {
-        if (!canvasModel.OwnerId.HasValue)
-        {
-            throw new ArgumentException("Incomplete canvas model is given.");
-        }
         CanvasStorage canvas = new()
         {
             Name = canvasModel.Name,
-            OwnerId = canvasModel.OwnerId.Value,
+            OwnerId = ownerId,
             CreationDate = canvasModel.CreationDate,
         };
         for (int i = 0; i < canvases.Count; i++)
@@ -30,6 +27,7 @@ public class CanvasStorage
         canvas.Id = canvases.Count - 1;
         return canvas;
     }
+
     public static CanvasStorage GetCanvasById(int id)
     {
         if (IsValidId(id))
@@ -43,10 +41,12 @@ public class CanvasStorage
             throw new ArgumentException("Invalid ID.");
         }
     }
+
     public static CanvasStorage[] GetAllCanvases()
     {
         return canvases.Where(x => x != null).Cast<CanvasStorage>().ToArray();
     }
+
     public static void DeleteCanvasById(int id)
     {
         if (IsValidId(id))
@@ -58,6 +58,7 @@ public class CanvasStorage
             throw new ArgumentException("Invalid ID.");
         }
     }
+
     public static bool IsValidId(int id)
     {
         if (!(0 <= id && id < canvases.Count))
@@ -70,6 +71,7 @@ public class CanvasStorage
         }
         return true;
     }
+
     public int Id { get; private set; }
     public string Name { get; private set; }
     public int OwnerId { get; private set; }
@@ -81,6 +83,7 @@ public class CanvasStorage
         OwnerId = default;
         CreationDate = default;
     }
+    
     public void Update(Canvas canvasModel)
     {
         Name = canvasModel.Name;
