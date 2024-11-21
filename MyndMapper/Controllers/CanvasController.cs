@@ -11,19 +11,19 @@ public class CanvasController : ControllerBase
     [HttpPost("{creatorId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult CreateCanvas(int creatorId, CanvasModel canvasModel)
+    public ActionResult CreateCanvas(int creatorId, Canvas canvasModel)
     {
-        User user;
+        UserStorage user;
         try
         {
-            user = Objects.User.GetUserById(creatorId);
+            user = Objects.UserStorage.GetUserById(creatorId);
         }
         catch (ArgumentException)
         {
             return NotFound();
         }
         canvasModel.SetOwnerId(creatorId);
-        Canvas canvas = Canvas.CreateCanvas(canvasModel);
+        CanvasStorage canvas = CanvasStorage.CreateCanvas(canvasModel);
         user.CreatedCanvases.Add(canvas.Id);
         return Ok();
     }
@@ -31,52 +31,52 @@ public class CanvasController : ControllerBase
     [HttpGet("canvasId={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<CanvasModel> GetCanvas(int id)
+    public ActionResult<Canvas> GetCanvas(int id)
     {
-        Canvas canvas;
+        CanvasStorage canvas;
         try
         {
-            canvas = Canvas.GetCanvasById(id);
+            canvas = CanvasStorage.GetCanvasById(id);
         }
         catch (ArgumentException)
         {
             return NotFound();
         }
-        return CanvasModel.CreateFromCanvas(canvas);
+        return Canvas.CreateFromCanvas(canvas);
     }
 
     [HttpGet("userId={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<CanvasModel[]> GetCanvasesOfUser(int id)
+    public ActionResult<Canvas[]> GetCanvasesOfUser(int id)
     {
-        User user;
+        UserStorage user;
         try
         {
-            user = Objects.User.GetUserById(id);
+            user = Objects.UserStorage.GetUserById(id);
         }
         catch (ArgumentException)
         {
             return NotFound();
         }
 
-        List<CanvasModel> canvasModels = [];
+        List<Canvas> canvasModels = [];
         foreach (var canvasId in user.CreatedCanvases)
         {
-            canvasModels.Add(CanvasModel.CreateFromCanvas(Canvas.GetCanvasById(canvasId)));
+            canvasModels.Add(Canvas.CreateFromCanvas(CanvasStorage.GetCanvasById(canvasId)));
         }
         return canvasModels.ToArray();
     }
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<CanvasModel[]> GetAllCanvases()
+    public ActionResult<Canvas[]> GetAllCanvases()
     {
-        Canvas[] canvases = Canvas.GetAllCanvases();
-        List<CanvasModel> canvasModels = [];
+        CanvasStorage[] canvases = CanvasStorage.GetAllCanvases();
+        List<Canvas> canvasModels = [];
         foreach (var canvas in canvases)
         {
-            canvasModels.Add(CanvasModel.CreateFromCanvas(canvas));
+            canvasModels.Add(Canvas.CreateFromCanvas(canvas));
         }
         return canvasModels.ToArray();
     }
@@ -84,12 +84,12 @@ public class CanvasController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult EditCanvas(int id, CanvasModel canvasModel)
+    public ActionResult EditCanvas(int id, Canvas canvasModel)
     {
-        Canvas canvas;
+        CanvasStorage canvas;
         try
         {
-            canvas = Canvas.GetCanvasById(id);
+            canvas = CanvasStorage.GetCanvasById(id);
         }
         catch (ArgumentException)
         {
@@ -106,9 +106,9 @@ public class CanvasController : ControllerBase
     {
         try
         {
-            Canvas canvas = Canvas.GetCanvasById(id);
-            Objects.User.GetUserById(canvas.OwnerId).CreatedCanvases.Remove(id);
-            Canvas.DeleteCanvasById(id);
+            CanvasStorage canvas = CanvasStorage.GetCanvasById(id);
+            Objects.UserStorage.GetUserById(canvas.OwnerId).CreatedCanvases.Remove(id);
+            CanvasStorage.DeleteCanvasById(id);
             return NoContent();
         }
         catch (ArgumentException)

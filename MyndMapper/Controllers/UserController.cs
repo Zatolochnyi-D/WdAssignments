@@ -10,38 +10,38 @@ public class UserController : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult CreateUser(UserModel userModel)
+    public ActionResult CreateUser(User userModel)
     {
-        Objects.User.CreateUser(userModel);
+        Objects.UserStorage.CreateUser(userModel);
         return Ok();
     }
 
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<UserModel> GetUser(int id)
+    public ActionResult<User> GetUser(int id)
     {
-        User user;
+        UserStorage user;
         try
         {
-            user = Objects.User.GetUserById(id);
+            user = Objects.UserStorage.GetUserById(id);
         }
         catch (ArgumentException)
         {
             return NotFound();
         }
-        return UserModel.CreateFromUser(user);
+        return Models.User.CreateFromUser(user);
     }
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<UserModel[]> GetAllUsers()
+    public ActionResult<User[]> GetAllUsers()
     {
-        User[] users = Objects.User.GetAllUsers();
-        List<UserModel> userModels = [];
+        UserStorage[] users = Objects.UserStorage.GetAllUsers();
+        List<User> userModels = [];
         foreach (var user in users)
         {
-            userModels.Add(UserModel.CreateFromUser(user));
+            userModels.Add(Models.User.CreateFromUser(user));
         }
         return userModels.ToArray();
     }
@@ -49,12 +49,12 @@ public class UserController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult EditUser(int id, UserModel userModel)
+    public ActionResult EditUser(int id, User userModel)
     {
-        User user;
+        UserStorage user;
         try
         {
-            user = Objects.User.GetUserById(id);
+            user = Objects.UserStorage.GetUserById(id);
         }
         catch (ArgumentException)
         {
@@ -71,12 +71,12 @@ public class UserController : ControllerBase
     {
         try
         {
-            User user = Objects.User.GetUserById(id);
+            UserStorage user = Objects.UserStorage.GetUserById(id);
             foreach (var canvasId in user.CreatedCanvases)
             {
-                Canvas.DeleteCanvasById(canvasId);
+                CanvasStorage.DeleteCanvasById(canvasId);
             }
-            Objects.User.DeleteUserById(id);
+            Objects.UserStorage.DeleteUserById(id);
             return NoContent();
         }
         catch (ArgumentException)

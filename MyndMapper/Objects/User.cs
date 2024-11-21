@@ -3,11 +3,11 @@ using MyndMapper.Objects;
 
 namespace MyndMapper.Models;
 
-public class UserModel
+public class User
 {
-    public static UserModel CreateFromUser(User user)
+    public static User CreateFromUser(UserStorage user)
     {
-        UserModel userModel = new()
+        User userModel = new()
         {
             Id = user.Id,
             Name = user.Name,
@@ -18,7 +18,7 @@ public class UserModel
         return userModel;
     }
 
-    public UserModel()
+    public User()
     {
         Id = null;
         CreatedCanvases = [];

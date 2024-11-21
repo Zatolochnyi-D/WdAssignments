@@ -7,32 +7,32 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        User.CreateUser(new()
+        UserStorage.CreateUser(new()
         {
             Name = "Athos",
             Email = "firstOne@nonexistentmail.com",
             Password = "123456",
         });
-        User.CreateUser(new()
+        UserStorage.CreateUser(new()
         {
             Name = "Porthos",
             Email = "secondOne@nonexistentmail.com",
             Password = "654321",
         });
-        User.CreateUser(new()
+        UserStorage.CreateUser(new()
         {
             Name = "Aramis",
             Email = "thirdOne@nonexistentmail.com",
             Password = "123321",
         });
-        CanvasModel model = new()
+        Canvas model = new()
         {
             Name = "NewCanvas",
             CreationDate = DateTime.Now,
         };
         model.SetOwnerId(0);
-        Canvas.CreateCanvas(model);
-        User.GetUserById(0).CreatedCanvases.Add(0);
+        CanvasStorage.CreateCanvas(model);
+        UserStorage.GetUserById(0).CreatedCanvases.Add(0);
 
         var builder = WebApplication.CreateBuilder(args);
 

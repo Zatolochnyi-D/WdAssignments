@@ -2,13 +2,13 @@ using MyndMapper.Models;
 
 namespace MyndMapper.Objects;
 
-public class User
+public class UserStorage
 {
-    private static readonly List<User?> users = [];
+    private static readonly List<UserStorage?> users = [];
 
-    public static void CreateUser(UserModel userModel)
+    public static void CreateUser(User userModel)
     {
-        User user = new()
+        UserStorage user = new()
         {
             Name = userModel.Name,
             Email = userModel.Email,
@@ -28,7 +28,7 @@ public class User
         user.Id = users.Count - 1;
     }
 
-    public static User GetUserById(int id)
+    public static UserStorage GetUserById(int id)
     {
         if (IsValidId(id))
         {
@@ -42,9 +42,9 @@ public class User
         }
     }
 
-    public static User[] GetAllUsers()
+    public static UserStorage[] GetAllUsers()
     {
-        return users.Where(x => x != null).Cast<User>().ToArray();
+        return users.Where(x => x != null).Cast<UserStorage>().ToArray();
     }
 
     public static void DeleteUserById(int id)
@@ -78,7 +78,7 @@ public class User
     public string Password { get; private set; }
     public List<int> CreatedCanvases { get; private set; }
 
-    private User()
+    private UserStorage()
     {
         Id = 0;
         Name = string.Empty;
@@ -87,7 +87,7 @@ public class User
         CreatedCanvases = [];
     }
 
-    public void Update(UserModel userModel)
+    public void Update(User userModel)
     {
         Name = userModel.Name;
         Email = userModel.Email;
