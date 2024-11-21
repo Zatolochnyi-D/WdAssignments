@@ -6,7 +6,7 @@ namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("users/")]
-public class UserController(IUserStorage userStorage) : ControllerBase
+public class UserController(IUserStorage userStorage, DataModelContext context) : ControllerBase
 {
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]

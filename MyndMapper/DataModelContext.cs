@@ -5,8 +5,8 @@ namespace MyndMapper;
 
 public class DataModelContext : DbContext
 {
-    public DbSet<User> Users { get; set; }
-    public DbSet<Canvas> Canvases { get; set; }
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Canvas> Canvases { get; set; } = null!;
 
     public DataModelContext(DbContextOptions<DataModelContext> options) : base(options) {} 
 }
