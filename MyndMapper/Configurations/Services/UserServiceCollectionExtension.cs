@@ -1,6 +1,6 @@
 using MyndMapper.Storages.UserStorage;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace MyndMapper.Configurations.Services;
 
 public static class UserServiceCollectionExtension
 {
