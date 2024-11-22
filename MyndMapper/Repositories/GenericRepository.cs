@@ -1,6 +1,6 @@
 using MyndMapper.Repositories.Contracts;
 
-namespace MyndMapper.Repositories.Generic;
+namespace MyndMapper.Repositories;
 
 public class GenericRepository<TEntity, TKey>(DataModelContext context) : IGenericRepository<TEntity, TKey> where TEntity : class
 {
