@@ -1,3 +1,4 @@
+using MyndMapper.Repositories.Contracts;
 
 namespace MyndMapper.Repositories.Generic;
 

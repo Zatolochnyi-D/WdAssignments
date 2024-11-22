@@ -1,4 +1,4 @@
-namespace MyndMapper.Repositories.Generic;
+namespace MyndMapper.Repositories.Contracts;
 
 public interface IGenericRepository<TEntity, TKey> where TEntity : class
 {
