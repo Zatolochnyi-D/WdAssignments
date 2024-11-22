@@ -9,6 +9,7 @@ public static class RepositoriesServiceCollectionExtension
     {
         services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
         services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<ICanvasRepository, CanvasRepository>();
         return services;
     }
 }

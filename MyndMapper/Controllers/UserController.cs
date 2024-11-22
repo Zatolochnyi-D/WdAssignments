@@ -59,7 +59,7 @@ public class UserController(IUserRepository repository) : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("users/all")]
+    [HttpDelete("/all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> RemoveAll()
     {
