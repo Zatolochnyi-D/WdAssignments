@@ -1,19 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyndMapper.Entities;
+using MyndMapper.Repositories.Contracts;
 
 namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("users/")]
-public class UserController(DataModelContext context) : ControllerBase
+public class UserController(IUserRepository repository) : ControllerBase
 {
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Get(int id)
     {
-        User? user = await context.Users.FindAsync(id);
+        User? user = await repository.GetAsync(id);
         if (user == null)
         {
             return NotFound();
@@ -28,7 +29,7 @@ public class UserController(DataModelContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetAll()
     {
-        IEnumerable<User> users = await context.Users.AsNoTracking().ToListAsync();
+        IEnumerable<User> users = await repository.GetAllAsync().AsNoTracking().ToListAsync();
         return Ok(users);
     }
 
@@ -36,54 +37,33 @@ public class UserController(DataModelContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> Create(User user)
     {
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+        await repository.AddAsync(user);
         return Ok();
     }
 
-    [HttpPut("{id}")]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Edit(int id, User user)
+    public async Task<ActionResult> Edit(User user)
     {
-        User? oldUser = await context.Users.FindAsync(id);
-        if (oldUser != null)
-        {
-            oldUser.Name = user.Name;
-            oldUser.Email = user.Email;
-            oldUser.Password = user.Password;
-            await context.SaveChangesAsync();
-            return Ok();
-        }
-        else
-        {
-            return NotFound();
-        }
-    }
-
-    [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Remove(int id)
-    {
-        User? user = await context.Users.FindAsync(id);
-        if (user != null)
-        {
-            context.Users.Remove(user);
-            await context.SaveChangesAsync();
-            return Ok();
-        }
-        else
-        {
-            return NotFound();
-        }
+        await repository.EditAsync(user);
+        return Ok();
     }
 
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> Remove(User user)
+    {
+        await repository.RemoveAsync(user);
+        return Ok();
+    }
+
+    [HttpDelete("users/all")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> RemoveAll()
     {
-        await context.Users.ExecuteDeleteAsync();
+        await repository.RemoveAllAsync();
         return Ok();
     }
 }
