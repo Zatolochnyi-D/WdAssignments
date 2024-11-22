@@ -74,4 +74,12 @@ public class CanvasController(DataModelContext context) : ControllerBase
             return NotFound();
         }
     }
+
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> RemoveAll()
+    {
+        await context.Canvases.ExecuteDeleteAsync();
+        return Ok();
+    }
 }

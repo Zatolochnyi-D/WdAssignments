@@ -78,4 +78,12 @@ public class UserController(DataModelContext context) : ControllerBase
             return NotFound();
         }
     }
+
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> RemoveAll()
+    {
+        await context.Users.ExecuteDeleteAsync();
+        return Ok();
+    }
 }
