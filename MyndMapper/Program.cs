@@ -13,8 +13,7 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddUser();
-        builder.Services.AddCanvas();
+        builder.Services.AddRepositories();
         builder.Services.AddDbContext<DataModelContext>(contextOptions => contextOptions.UseSqlite("Data source=sample.db"));
 
         var app = builder.Build();
