@@ -15,5 +15,9 @@ public class CanvasConfiguration : IEntityTypeConfiguration<Canvas>
 
         builder.Property(e => e.CreationDate)
             .IsRequired();
+
+        builder.HasOne(e => e.Owner)
+            .WithMany(e => e.CreatedCanvases)
+            .IsRequired();
     }
 }

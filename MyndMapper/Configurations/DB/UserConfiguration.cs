@@ -18,5 +18,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(e => e.Password)
             .IsRequired();
+
+        builder.HasMany(e => e.CreatedCanvases)
+            .WithOne(e => e.Owner)
+            .IsRequired();
     }
 }
