@@ -31,9 +31,16 @@ public class CanvasController(DataModelContext context) : ControllerBase
 
     [HttpPost("{creatorId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Create(int creatorId, Canvas canvas)
     {
-        canvas.OwnerId = creatorId;
+        User? user = await context.Users.FindAsync(creatorId);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        canvas.Owner = user;
+        user.CreatedCanvases.Add(canvas);
         context.Canvases.Add(canvas);
         await context.SaveChangesAsync();
         return Ok();
