@@ -4,9 +4,9 @@ public class Canvas
 {
     public int Id { get; set; }
 
-    public required string Name { get; set; }
-
-    public int OwnerId { get; set; }
+    public string Name { get; set; } = null!;
 
     public DateTime CreationDate { get; set; }
+
+    public User Owner { get; set; } = null!;
 }
