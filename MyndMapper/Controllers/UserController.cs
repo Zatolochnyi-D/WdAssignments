@@ -16,7 +16,7 @@ public class UserController(IUserRepository repository, IMapper mapper) : Contro
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Get(int id)
     {
-        User? user = await repository.GetAsync(id);
+        User? user = await repository.GetWithCanvasesAsync(id);
         if (user == null)
         {
             return NotFound();
@@ -32,12 +32,12 @@ public class UserController(IUserRepository repository, IMapper mapper) : Contro
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetAll()
     {
-        IEnumerable<User> users = await repository.GetAllAsync().AsNoTracking().ToListAsync();
+        IEnumerable<User> users = await repository.GetAllAsync().ToListAsync();
         IEnumerable<UserGetDto> getDtos = users.Select(mapper.Map<UserGetDto>);
         return Ok(getDtos);
     }
 
-    [HttpPost("/create")]
+    [HttpPost("create/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> Create(UserPostDto postDto)
     {

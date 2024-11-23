@@ -11,7 +11,7 @@ namespace MyndMapper.Controllers;
 [Route("canvases/")]
 public class CanvasController(ICanvasRepository repository, IUserRepository userRepository, IMapper mapper) : ControllerBase
 {
-    [HttpGet("/get/{id}")]
+    [HttpGet("get/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Get(int id)
@@ -28,21 +28,21 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetAll()
     {
-        IEnumerable<Canvas> canvases = await repository.GetAllAsync().AsNoTracking().ToListAsync();
+        IEnumerable<Canvas> canvases = await repository.GetAllAsync().ToListAsync();
         return Ok(canvases);
     }
 
     [HttpPost("create/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Create(CanvasPostDto putDto)
+    public async Task<ActionResult> Create(CanvasPostDto postDto)
     {
-        User? owner = await userRepository.GetAsync(putDto.OwnerId);
+        User? owner = await userRepository.GetAsync(postDto.OwnerId);
         if (owner == null)
         {
             return NotFound();
         }
-        Canvas canvas = mapper.Map<Canvas>(putDto);
+        Canvas canvas = mapper.Map<Canvas>(postDto);
         canvas.Owner = owner;
         owner.CreatedCanvases.Add(canvas);
         await repository.AddAsync(canvas);
