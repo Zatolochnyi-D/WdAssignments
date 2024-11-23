@@ -52,7 +52,7 @@ public class UserController(IUserRepository repository, IMapper mapper) : Contro
     public async Task<ActionResult> Edit(UserPutDto putDto)
     {
         User user = mapper.Map<User>(putDto);
-        bool exists = await repository.GetAllAsync().AsNoTracking().Where(x => x.Id == user.Id).AnyAsync();
+        bool exists = await repository.IsIdExist(putDto.Id);
         if (!exists)
         {
             return NotFound();
