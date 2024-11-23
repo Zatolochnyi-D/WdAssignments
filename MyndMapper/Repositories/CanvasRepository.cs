@@ -6,7 +6,12 @@ namespace MyndMapper.Repositories;
 
 public class CanvasRepository(DataModelContext context) : GenericRepository<Canvas, int>(context), ICanvasRepository
 {
-    public Task<Canvas?> GetWithUserAsync(int key)
+    public override IQueryable<Canvas> GetAllAsync()
+    {
+        return context.Set<Canvas>().Include(e => e.Owner).AsNoTracking();
+    }
+
+    public Task<Canvas?> GetWithUsersAsync(int key)
     {
         return context.Set<Canvas>().Include(e => e.Owner).FirstOrDefaultAsync(x => x.Id == key);
     }
