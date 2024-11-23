@@ -1,5 +1,3 @@
-using MyndMapper.Entities;
-
 namespace MyndMapper.DTOs.UserDTOs;
 
 public class UserGetDto
@@ -12,5 +10,5 @@ public class UserGetDto
 
     public string Password { get; set; } = null!;
 
-    public List<Canvas> CreatedCanvases { get; set; } = [];
+    public List<int> CreatedCanvases { get; set; } = [];
 }
