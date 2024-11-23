@@ -10,12 +10,12 @@ namespace MyndMapper.Controllers;
 [Route("users/")]
 public class UserController(IUserRepository repository) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("get/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Get(UserIdDto idDto)
+    public async Task<ActionResult> Get(int id)
     {
-        User? user = await repository.GetAsync(idDto.TargetId);
+        User? user = await repository.GetAsync(id);
         if (user == null)
         {
             return NotFound();
@@ -34,7 +34,7 @@ public class UserController(IUserRepository repository) : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpGet("get/all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetAll()
     {
@@ -43,7 +43,7 @@ public class UserController(IUserRepository repository) : ControllerBase
         return Ok(getDtos);
     }
 
-    [HttpPost]
+    [HttpPost("/create")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> Create(UserPostDto postDto)
     {
@@ -57,7 +57,7 @@ public class UserController(IUserRepository repository) : ControllerBase
         return Ok();
     }
 
-    [HttpPut]
+    [HttpPut("edit/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Edit(UserPutDto putDto)
@@ -73,20 +73,20 @@ public class UserController(IUserRepository repository) : ControllerBase
         return Ok();
     }
 
-    [HttpDelete]
+    [HttpDelete("delete/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Remove(UserIdDto idDto)
+    public async Task<ActionResult> Remove(int id)
     {
         User user = new()
         {
-            Id = idDto.TargetId,
+            Id = id,
         };
         await repository.RemoveAsync(user);
         return Ok();
     }
 
-    [HttpDelete("users/all")]
+    [HttpDelete("delete/all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> RemoveAll()
     {
