@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyndMapper.DTOs.UserDTOs;
@@ -11,7 +10,7 @@ namespace MyndMapper.Controllers;
 [Route("users/")]
 public class UserController(IUserRepository repository) : ControllerBase
 {
-    [HttpGet("{id}")]
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Get(UserIdDto idDto)
