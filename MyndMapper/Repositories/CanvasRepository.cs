@@ -16,6 +16,11 @@ public class CanvasRepository(DataModelContext context) : GenericRepository<Canv
         return context.Set<Canvas>().Include(e => e.Owner).FirstOrDefaultAsync(x => x.Id == key);
     }
 
+    public Task<bool> IsIdExist(int key)
+    {
+        return context.Set<Canvas>().AsNoTracking().Where(x => x.Id == key).AnyAsync();
+    }
+
     public Task RemoveAllAsync()
     {
         return context.Set<Canvas>().ExecuteDeleteAsync();
