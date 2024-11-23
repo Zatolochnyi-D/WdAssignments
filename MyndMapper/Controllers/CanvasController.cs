@@ -16,12 +16,13 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Get(int id)
     {
-        Canvas? canvas = await repository.GetAsync(id);
+        Canvas? canvas = await repository.GetWithUsersAsync(id);
         if (canvas == null)
         {
             return NotFound();
         }
-        return Ok(canvas);
+        CanvasGetDto getDto = mapper.Map<CanvasGetDto>(canvas);
+        return Ok(getDto);
     }
 
     [HttpGet("get/all")]
@@ -29,7 +30,8 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     public async Task<ActionResult> GetAll()
     {
         IEnumerable<Canvas> canvases = await repository.GetAllAsync().ToListAsync();
-        return Ok(canvases);
+        IEnumerable<CanvasGetDto> getDtos = canvases.Select(mapper.Map<CanvasGetDto>);
+        return Ok(getDtos);
     }
 
     [HttpPost("create/")]
@@ -49,25 +51,36 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
         return Ok();
     }
 
-    [HttpPut]
+    [HttpPut("edit/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Edit(Canvas canvas)
+    public async Task<ActionResult> Edit(CanvasPutDto putDto)
     {
+        Canvas canvas = mapper.Map<Canvas>(putDto);
+        bool exists = await repository.IsIdExist(putDto.Id);
+        if (!exists)
+        {
+            return NotFound();
+        }
         await repository.EditAsync(canvas);
         return Ok();
     }
 
-    [HttpDelete]
+    [HttpDelete("delete/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Remove(Canvas canvas)
+    public async Task<ActionResult> Remove(int id)
     {
+        Canvas? canvas = await repository.GetAsync(id);
+        if (canvas == null)
+        {
+            return NotFound();
+        }
         await repository.RemoveAsync(canvas);
         return Ok();
     }
 
-    [HttpDelete("canvases/all")]
+    [HttpDelete("delete/all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> RemoveAll()
     {
