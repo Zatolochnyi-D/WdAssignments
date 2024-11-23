@@ -7,7 +7,8 @@ public class UserProfile : Profile
 {
     public UserProfile()
     {
-        CreateMap<User, UserGetDto>();
+        CreateMap<Canvas, int>().ConvertUsing(src => src.Id);
+        CreateMap<User, UserGetDto>().ForMember(dest => dest.CreatedCanvases, opt => opt.MapFrom(src => src.CreatedCanvases));
         CreateMap<UserPostDto, User>();
         CreateMap<UserPutDto, User>();
     }

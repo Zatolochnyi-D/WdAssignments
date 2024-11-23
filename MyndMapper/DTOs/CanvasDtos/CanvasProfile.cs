@@ -7,7 +7,7 @@ public class CanvasProfile : Profile
 {
     public CanvasProfile()
     {
-        CreateMap<Canvas, CanvasGetDto>();
-        CreateMap<CanvasPostDto, Canvas>();
+        CreateMap<Canvas, CanvasGetDto>().ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.Owner.Id));
+        CreateMap<CanvasPostDto, Canvas>().ForMember(dest => dest.Owner, opt => opt.Ignore());
     }
 }
