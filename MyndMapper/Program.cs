@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using MyndMapper.Configurations.Services;
 
@@ -14,6 +15,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddRepositories();
+        builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
         builder.Services.AddDbContext<DataModelContext>(contextOptions => contextOptions.UseSqlite("Data source=sample.db"));
 
         var app = builder.Build();

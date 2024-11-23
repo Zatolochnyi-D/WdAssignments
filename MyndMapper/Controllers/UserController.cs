@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyndMapper.DTOs.UserDTOs;
@@ -8,7 +9,7 @@ namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("users/")]
-public class UserController(IUserRepository repository) : ControllerBase
+public class UserController(IUserRepository repository, IMapper mapper) : ControllerBase
 {
     [HttpGet("get/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -22,14 +23,7 @@ public class UserController(IUserRepository repository) : ControllerBase
         }
         else
         {
-            UserGetDto getDto = new()
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                Password = user.Password,
-                CreatedCanvases = user.CreatedCanvases,
-            };
+            UserGetDto getDto = mapper.Map<UserGetDto>(user);
             return Ok(getDto);
         }
     }
@@ -39,7 +33,7 @@ public class UserController(IUserRepository repository) : ControllerBase
     public async Task<ActionResult> GetAll()
     {
         IEnumerable<User> users = await repository.GetAllAsync().AsNoTracking().ToListAsync();
-        IEnumerable<UserGetDto> getDtos = users.Select(x => new UserGetDto() { Id = x.Id, Name = x.Name, Email = x.Email, Password = x.Password, CreatedCanvases = x.CreatedCanvases });
+        IEnumerable<UserGetDto> getDtos = users.Select(mapper.Map<UserGetDto>);
         return Ok(getDtos);
     }
 
@@ -47,12 +41,7 @@ public class UserController(IUserRepository repository) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> Create(UserPostDto postDto)
     {
-        User user = new()
-        {
-            Name = postDto.Name,
-            Email = postDto.Email,
-            Password = postDto.Password,
-        };
+        User user = mapper.Map<User>(postDto);
         await repository.AddAsync(user);
         return Ok();
     }
@@ -62,13 +51,12 @@ public class UserController(IUserRepository repository) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Edit(UserPutDto putDto)
     {
-        User user = new()
+        User user = mapper.Map<User>(putDto);
+        bool exists = await repository.GetAllAsync().AsNoTracking().Where(x => x.Id == user.Id).AnyAsync();
+        if (!exists)
         {
-            Id = putDto.TargetId,
-            Name = putDto.Name,
-            Email = putDto.Email,
-            Password = putDto.Password,
-        };
+            return NotFound();
+        }
         await repository.EditAsync(user);
         return Ok();
     }
@@ -78,10 +66,11 @@ public class UserController(IUserRepository repository) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Remove(int id)
     {
-        User user = new()
+        User? user = await repository.GetAsync(id);
+        if (user == null)
         {
-            Id = id,
-        };
+            return NotFound();
+        }
         await repository.RemoveAsync(user);
         return Ok();
     }
