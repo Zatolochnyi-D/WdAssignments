@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyndMapper.DTOs.CanvasDtos;
 using MyndMapper.Entities;
 using MyndMapper.Repositories.Contracts;
 
@@ -7,14 +9,13 @@ namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("canvases/")]
-public class CanvasController(ICanvasRepository repository) : ControllerBase
+public class CanvasController(ICanvasRepository repository, IUserRepository userRepository, IMapper mapper) : ControllerBase
 {
-    [HttpGet("canvasId={id}")]
+    [HttpGet("/get/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Get(int id)
     {
-        
         Canvas? canvas = await repository.GetAsync(id);
         if (canvas == null)
         {
@@ -23,7 +24,7 @@ public class CanvasController(ICanvasRepository repository) : ControllerBase
         return Ok(canvas);
     }
 
-    [HttpGet]
+    [HttpGet("get/all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetAll()
     {
@@ -31,11 +32,19 @@ public class CanvasController(ICanvasRepository repository) : ControllerBase
         return Ok(canvases);
     }
 
-    [HttpPost("{creatorId}")]
+    [HttpPost("create/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Create(Canvas canvas)
+    public async Task<ActionResult> Create(CanvasPostDto putDto)
     {
+        User? owner = await userRepository.GetAsync(putDto.OwnerId);
+        if (owner == null)
+        {
+            return NotFound();
+        }
+        Canvas canvas = mapper.Map<Canvas>(putDto);
+        canvas.Owner = owner;
+        owner.CreatedCanvases.Add(canvas);
         await repository.AddAsync(canvas);
         return Ok();
     }
