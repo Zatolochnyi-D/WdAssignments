@@ -58,7 +58,7 @@ public class CanvasController(ICanvasRepository repository) : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("/all")]
+    [HttpDelete("canvases/all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> RemoveAll()
     {
