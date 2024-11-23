@@ -1,4 +1,6 @@
 using AutoMapper;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyndMapper.DTOs.CanvasDtos;
@@ -9,7 +11,7 @@ namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("canvases/")]
-public class CanvasController(ICanvasRepository repository, IUserRepository userRepository, IMapper mapper) : ControllerBase
+public class CanvasController(ICanvasRepository repository, IUserRepository userRepository, IMapper mapper, IValidator<CanvasPostDto> postValidator, IValidator<CanvasPutDto> putValidator) : ControllerBase
 {
     [HttpGet("get/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -36,32 +38,35 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
 
     [HttpPost("create/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Create(CanvasPostDto postDto)
     {
-        User? owner = await userRepository.GetAsync(postDto.OwnerId);
-        if (owner == null)
+        ValidationResult result = await postValidator.ValidateAsync(postDto);
+        if (!result.IsValid)
         {
-            return NotFound();
+            return BadRequest(result.Errors[0].ErrorMessage);
         }
+
+        User? owner = await userRepository.GetAsync(postDto.OwnerId);
         Canvas canvas = mapper.Map<Canvas>(postDto);
-        canvas.Owner = owner;
-        owner.CreatedCanvases.Add(canvas);
+        canvas.Owner = owner!;
+        owner!.CreatedCanvases.Add(canvas);
         await repository.AddAsync(canvas);
         return Ok();
     }
 
     [HttpPut("edit/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Edit(CanvasPutDto putDto)
     {
-        Canvas canvas = mapper.Map<Canvas>(putDto);
-        bool exists = await repository.IsIdExist(putDto.Id);
-        if (!exists)
+        ValidationResult result = await putValidator.ValidateAsync(putDto);
+        if (!result.IsValid)
         {
-            return NotFound();
+            return BadRequest(result.Errors[0].ErrorMessage);
         }
+
+        Canvas canvas = mapper.Map<Canvas>(putDto);
         await repository.EditAsync(canvas);
         return Ok();
     }

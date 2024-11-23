@@ -16,6 +16,7 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddRepositories();
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        builder.Services.AddValidators();
         builder.Services.AddDbContext<DataModelContext>(contextOptions => contextOptions.UseSqlite("Data source=sample.db"));
 
         var app = builder.Build();

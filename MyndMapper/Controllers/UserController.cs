@@ -1,4 +1,6 @@
 using AutoMapper;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyndMapper.DTOs.UserDTOs;
@@ -9,7 +11,7 @@ namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("users/")]
-public class UserController(IUserRepository repository, IMapper mapper) : ControllerBase
+public class UserController(IUserRepository repository, IMapper mapper, IValidator<UserPostDto> postValidator, IValidator<UserPutDto> putValidator) : ControllerBase
 {
     [HttpGet("get/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -39,8 +41,15 @@ public class UserController(IUserRepository repository, IMapper mapper) : Contro
 
     [HttpPost("create/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Create(UserPostDto postDto)
     {
+        ValidationResult result = await postValidator.ValidateAsync(postDto);
+        if (!result.IsValid)
+        {
+            return BadRequest(result.Errors[0].ErrorMessage);
+        }
+        
         User user = mapper.Map<User>(postDto);
         await repository.AddAsync(user);
         return Ok();
@@ -48,15 +57,15 @@ public class UserController(IUserRepository repository, IMapper mapper) : Contro
 
     [HttpPut("edit/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Edit(UserPutDto putDto)
     {
-        User user = mapper.Map<User>(putDto);
-        bool exists = await repository.IsIdExist(putDto.Id);
-        if (!exists)
+        ValidationResult result = await putValidator.ValidateAsync(putDto);
+        if (!result.IsValid)
         {
-            return NotFound();
+            return BadRequest(result.Errors[0].ErrorMessage);
         }
+        User user = mapper.Map<User>(putDto);
         await repository.EditAsync(user);
         return Ok();
     }
