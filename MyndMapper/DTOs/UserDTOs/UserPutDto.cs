@@ -2,7 +2,7 @@ namespace MyndMapper.DTOs.UserDTOs;
 
 public class UserPutDto
 {
-    public int TargetId { get; set; }
+    public int Id { get; set; }
 
     public string Name { get; set; } = null!;
 
