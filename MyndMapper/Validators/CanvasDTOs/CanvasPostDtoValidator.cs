@@ -13,7 +13,6 @@ public class CanvasPostDtoValidator : AbstractValidator<CanvasPostDto>
         this.repository = repository;
 
         RuleFor(x => x.Name).NotEmpty();
-        RuleFor(x => x.CreationDate).NotEmpty();
         RuleFor(x => x.OwnerId).NotNull().Custom(async (id, context) =>
         {
             bool exists = await repository.IsIdExist(id);

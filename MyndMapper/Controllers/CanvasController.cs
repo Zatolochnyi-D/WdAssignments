@@ -50,6 +50,7 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
         User? owner = await userRepository.GetAsync(postDto.OwnerId);
         Canvas canvas = mapper.Map<Canvas>(postDto);
         canvas.Owner = owner!;
+        canvas.CreationDate = DateTime.Now;
         owner!.CreatedCanvases.Add(canvas);
         await repository.AddAsync(canvas);
         return Ok();
