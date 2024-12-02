@@ -47,7 +47,13 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
         ValidationResult result = await postValidator.ValidateAsync(postDto);
         if (!result.IsValid)
         {
-            return BadRequest(result.Errors[0].ErrorMessage);
+            string combinedErrorMessage = "";
+            foreach (var error in result.Errors)
+            {
+                combinedErrorMessage += error.ErrorMessage;
+                combinedErrorMessage += "\n";
+            }
+            return BadRequest(combinedErrorMessage);
         }
         
         User user = mapper.Map<User>(postDto);
