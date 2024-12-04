@@ -3,6 +3,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MyndMapper.Configurations.Configurations;
 using MyndMapper.DTOs.UserDTOs;
 using MyndMapper.Entities;
 using MyndMapper.Repositories.Contracts;
@@ -11,8 +13,10 @@ namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("users/")]
-public class UserController(IUserRepository repository, IMapper mapper, IValidator<UserPostDto> postValidator, IValidator<UserPutDto> putValidator) : ControllerBase
+public class UserController(IUserRepository repository, IMapper mapper, IValidator<UserPostDto> postValidator, IValidator<UserPutDto> putValidator, IOptions<Global> options) : ControllerBase
 {
+    private Global global = options.Value;
+
     [HttpGet("get/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -92,9 +96,17 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
 
     [HttpDelete("delete/all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> RemoveAll()
     {
-        await repository.RemoveAllAsync();
-        return Ok();
+        if (global.AllowDbWipe)
+        {
+            await repository.RemoveAllAsync();
+            return Ok();
+        }
+        else
+        {
+            return StatusCode(403);
+        }
     }
 }

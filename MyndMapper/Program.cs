@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using MyndMapper.Configurations.Configurations;
 using MyndMapper.Configurations.Services;
 
 namespace MyndMapper;
@@ -18,6 +19,7 @@ public class Program
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
         builder.Services.AddValidators();
         builder.Services.AddDbContext<DataModelContext>(contextOptions => contextOptions.UseSqlite("Data source=sample.db"));
+        builder.Services.AddOptions<Global>().BindConfiguration("Global");
 
         var app = builder.Build();
 

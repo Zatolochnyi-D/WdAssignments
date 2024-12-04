@@ -6,13 +6,17 @@ using Microsoft.EntityFrameworkCore;
 using MyndMapper.DTOs.CanvasDtos;
 using MyndMapper.Entities;
 using MyndMapper.Repositories.Contracts;
+using Microsoft.Extensions.Options;
+using MyndMapper.Configurations.Configurations;
 
 namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("canvases/")]
-public class CanvasController(ICanvasRepository repository, IUserRepository userRepository, IMapper mapper, IValidator<CanvasPostDto> postValidator, IValidator<CanvasPutDto> putValidator) : ControllerBase
+public class CanvasController(ICanvasRepository repository, IUserRepository userRepository, IMapper mapper, IValidator<CanvasPostDto> postValidator, IValidator<CanvasPutDto> putValidator, IOptions<Global> options) : ControllerBase
 {
+    private Global global = options.Value;
+
     [HttpGet("get/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -94,9 +98,17 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
 
     [HttpDelete("delete/all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> RemoveAll()
     {
-        await repository.RemoveAllAsync();
-        return Ok();
+        if (global.AllowDbWipe)
+        {
+            await repository.RemoveAllAsync();
+            return Ok();
+        }
+        else
+        {
+            return StatusCode(403);
+        }
     }
 }
