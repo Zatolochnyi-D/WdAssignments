@@ -2,6 +2,7 @@ using FluentValidation;
 using MyndMapper.DTOs.CanvasDtos;
 using MyndMapper.DTOs.UserDTOs;
 using MyndMapper.Validators.CanvasDTOs;
+using MyndMapper.Validators.UserDTOs;
 
 namespace MyndMapper.Configurations.Services;
 
