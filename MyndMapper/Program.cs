@@ -20,6 +20,7 @@ public class Program
         builder.Services.AddValidators();
         builder.Services.AddDbContext<DataModelContext>(contextOptions => contextOptions.UseSqlite("Data source=sample.db"));
         builder.Services.AddOptions<Global>().BindConfiguration("Global");
+        builder.Services.AddDistributedMemoryCache();
 
         var app = builder.Build();
 

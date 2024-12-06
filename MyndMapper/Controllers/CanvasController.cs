@@ -8,13 +8,18 @@ using MyndMapper.Entities;
 using MyndMapper.Repositories.Contracts;
 using Microsoft.Extensions.Options;
 using MyndMapper.Configurations.Configurations;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
+using System.Text;
 
 namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("canvases/")]
-public class CanvasController(ICanvasRepository repository, IUserRepository userRepository, IMapper mapper, IValidator<CanvasPostDto> postValidator, IValidator<CanvasPutDto> putValidator, IOptions<Global> options) : ControllerBase
+public class CanvasController(ICanvasRepository repository, IUserRepository userRepository, IMapper mapper, IValidator<CanvasPostDto> postValidator, IValidator<CanvasPutDto> putValidator, IOptions<Global> options, IDistributedCache cache) : ControllerBase
 {
+    private const string AllCanvasesCacheKey = "GetAllCanvases";
+
     private Global global = options.Value;
 
     [HttpGet("get/{id}")]
@@ -22,12 +27,22 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Get(int id)
     {
-        Canvas? canvas = await repository.GetWithUsersAsync(id);
-        if (canvas == null)
+        byte[]? cacheData = await cache.GetAsync(AllCanvasesCacheKey);
+        CanvasGetDto? getDto;
+        if (cacheData != null)
+        {
+            IEnumerable<CanvasGetDto> getDtos = JsonSerializer.Deserialize<IEnumerable<CanvasGetDto>>(Encoding.UTF8.GetString(cacheData))!;
+            getDto = getDtos.FirstOrDefault(x => x.Id == id);
+        }
+        else
+        {
+            getDto = mapper.Map<CanvasGetDto>(await repository.GetWithUsersAsync(id));
+        }
+
+        if (getDto == null)
         {
             return NotFound();
         }
-        CanvasGetDto getDto = mapper.Map<CanvasGetDto>(canvas);
         return Ok(getDto);
     }
 
@@ -35,8 +50,23 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetAll()
     {
-        IEnumerable<Canvas> canvases = await repository.GetAllAsync().ToListAsync();
-        IEnumerable<CanvasGetDto> getDtos = canvases.Select(mapper.Map<CanvasGetDto>);
+        byte[]? cacheData = await cache.GetAsync(AllCanvasesCacheKey);
+        IEnumerable<CanvasGetDto> getDtos;
+        if (cacheData != null)
+        {
+            getDtos = JsonSerializer.Deserialize<IEnumerable<CanvasGetDto>>(Encoding.UTF8.GetString(cacheData))!;
+        }
+        else
+        {
+            IEnumerable<Canvas> canvases = await repository.GetAllAsync().ToListAsync();
+            getDtos = canvases.Select(mapper.Map<CanvasGetDto>);
+            string serialized = JsonSerializer.Serialize(getDtos);
+            byte[] encoded = Encoding.UTF8.GetBytes(serialized);
+            cache.Set(AllCanvasesCacheKey, encoded, new DistributedCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20),
+            });
+        }
         return Ok(getDtos);
     }
 
