@@ -1,8 +1,11 @@
+using System.Text;
+using System.Text.Json;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using MyndMapper.Configurations.Configurations;
 using MyndMapper.DTOs.UserDTOs;
@@ -13,8 +16,10 @@ namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("users/")]
-public class UserController(IUserRepository repository, IMapper mapper, IValidator<UserPostDto> postValidator, IValidator<UserPutDto> putValidator, IOptions<Global> options) : ControllerBase
+public class UserController(IUserRepository repository, IMapper mapper, IValidator<UserPostDto> postValidator, IValidator<UserPutDto> putValidator, IOptions<Global> options, IDistributedCache cache) : ControllerBase
 {
+    private const string AllUsersCacheKey = "GetAllUsers";
+
     private Global global = options.Value;
 
     [HttpGet("get/{id}")]
@@ -22,24 +27,46 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Get(int id)
     {
-        User? user = await repository.GetWithCanvasesAsync(id);
-        if (user == null)
+        byte[]? cacheData = await cache.GetAsync(AllUsersCacheKey);
+        UserGetDto? getDto;
+        if (cacheData != null)
         {
-            return NotFound();
+            IEnumerable<UserGetDto> getDtos = JsonSerializer.Deserialize<IEnumerable<UserGetDto>>(Encoding.UTF8.GetString(cacheData))!;
+            getDto = getDtos.FirstOrDefault(x => x.Id == id);
         }
         else
         {
-            UserGetDto getDto = mapper.Map<UserGetDto>(user);
-            return Ok(getDto);
+            getDto = mapper.Map<UserGetDto>(await repository.GetWithCanvasesAsync(id));
         }
+
+        if (getDto == null)
+        {
+            return NotFound();
+        }
+        return Ok(getDto);
     }
 
     [HttpGet("get/all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetAll()
     {
-        IEnumerable<User> users = await repository.GetAllAsync().ToListAsync();
-        IEnumerable<UserGetDto> getDtos = users.Select(mapper.Map<UserGetDto>);
+        byte[]? cacheData = await cache.GetAsync(AllUsersCacheKey);
+        IEnumerable<UserGetDto> getDtos;
+        if (cacheData != null)
+        {
+            getDtos = JsonSerializer.Deserialize<IEnumerable<UserGetDto>>(Encoding.UTF8.GetString(cacheData))!;
+        }
+        else
+        {
+            IEnumerable<User> users = await repository.GetAllAsync().ToListAsync();
+            getDtos = users.Select(mapper.Map<UserGetDto>);
+            string serialized = JsonSerializer.Serialize(getDtos);
+            byte[] encoded = Encoding.UTF8.GetBytes(serialized);
+            cache.Set(AllUsersCacheKey, encoded, new DistributedCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(global.CacheLifespanSeconds),
+            });
+        }
         return Ok(getDtos);
     }
 
