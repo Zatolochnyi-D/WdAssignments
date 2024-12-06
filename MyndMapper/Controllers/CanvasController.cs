@@ -64,7 +64,7 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
             byte[] encoded = Encoding.UTF8.GetBytes(serialized);
             cache.Set(AllCanvasesCacheKey, encoded, new DistributedCacheEntryOptions()
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20),
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(global.CacheLifespanSeconds),
             });
         }
         return Ok(getDtos);

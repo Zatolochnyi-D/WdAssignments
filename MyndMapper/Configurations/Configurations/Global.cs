@@ -4,4 +4,5 @@ public class Global
 {
     public bool AllowDbWipe { get; set; }
     public int PasswordMinLength { get; set; }
+    public int CacheLifespanSeconds { get; set; }
 }
