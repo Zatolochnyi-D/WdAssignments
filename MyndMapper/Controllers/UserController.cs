@@ -27,27 +27,27 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Get(int id)
     {
-        logger.LogDebug("Initiated Get User {Id}", id);
+        logger.LogInformation("Initiated Get User {Id}", id);
         byte[]? cacheData = await cache.GetAsync(AllUsersCacheKey);
         UserGetDto? getDto;
         if (cacheData != null)
         {
             IEnumerable<UserGetDto> getDtos = JsonSerializer.Deserialize<IEnumerable<UserGetDto>>(Encoding.UTF8.GetString(cacheData))!;
             getDto = getDtos.FirstOrDefault(x => x.Id == id);
-            logger.LogDebug("Looked up User {Id} in cache.", id);
+            logger.LogInformation("Looked up User {Id} in cache.", id);
         }
         else
         {
             getDto = mapper.Map<UserGetDto>(await repository.GetWithCanvasesAsync(id));
-            logger.LogDebug("Looked up User {Id} in DB.", id);
+            logger.LogInformation("Looked up User {Id} in DB.", id);
         }
 
         if (getDto == null)
         {
-            logger.LogDebug("User {Id} not found.", id);
+            logger.LogInformation("User {Id} not found.", id);
             return NotFound();
         }
-        logger.LogDebug("User {Id} found and returned.", id);
+        logger.LogInformation("User {Id} found and returned.", id);
         return Ok(getDto);
     }
 
@@ -55,13 +55,13 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetAll()
     {
-        logger.LogDebug("Initiated get of all Users.");
+        logger.LogInformation("Initiated get of all Users.");
         byte[]? cacheData = await cache.GetAsync(AllUsersCacheKey);
         IEnumerable<UserGetDto> getDtos;
         if (cacheData != null)
         {
             getDtos = JsonSerializer.Deserialize<IEnumerable<UserGetDto>>(Encoding.UTF8.GetString(cacheData))!;
-            logger.LogDebug("Looked up Users in cache.");
+            logger.LogInformation("Looked up Users in cache.");
         }
         else
         {
@@ -73,9 +73,9 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(global.CacheLifespanSeconds),
             });
-            logger.LogDebug("Looked up Users in DB.");
+            logger.LogInformation("Looked up Users in DB.");
         }
-        logger.LogDebug("All Users gathered and returned.");
+        logger.LogInformation("All Users gathered and returned.");
         return Ok(getDtos);
     }
 
@@ -84,7 +84,7 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Create(UserPostDto postDto)
     {
-        logger.LogDebug("Initiated creation of new User.");
+        logger.LogInformation("Initiated creation of new User.");
         ValidationResult result = await postValidator.ValidateAsync(postDto);
         if (!result.IsValid)
         {
@@ -94,13 +94,13 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
                 combinedErrorMessage += error.ErrorMessage;
                 combinedErrorMessage += "\n";
             }
-            logger.LogDebug("User is not created due to incorrect input data:\n{errorMessage}", combinedErrorMessage);
+            logger.LogInformation("User is not created due to incorrect input data:\n{errorMessage}", combinedErrorMessage);
             return BadRequest(combinedErrorMessage);
         }
 
         User user = mapper.Map<User>(postDto);
         await repository.AddAsync(user);
-        logger.LogDebug("Created new User - {id}", user.Id);
+        logger.LogInformation("Created new User - {id}", user.Id);
         return Ok();
     }
 
@@ -109,7 +109,7 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Edit(UserPutDto putDto)
     {
-        logger.LogDebug("Initiated modification of User {Id}.", putDto.Id);
+        logger.LogInformation("Initiated modification of User {Id}.", putDto.Id);
         ValidationResult result = await putValidator.ValidateAsync(putDto);
         if (!result.IsValid)
         {
@@ -119,12 +119,12 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
                 combinedErrorMessage += error.ErrorMessage;
                 combinedErrorMessage += "\n";
             }
-            logger.LogDebug("User {Id} is not modified due to incorrect input data:\n{errorMessage}", putDto.Id, combinedErrorMessage);
+            logger.LogInformation("User {Id} is not modified due to incorrect input data:\n{errorMessage}", putDto.Id, combinedErrorMessage);
             return BadRequest(combinedErrorMessage);
         }
         User user = mapper.Map<User>(putDto);
         await repository.EditAsync(user);
-        logger.LogDebug("Successfuly modified User {Id}", putDto.Id);
+        logger.LogInformation("Successfuly modified User {Id}", putDto.Id);
         return Ok();
     }
 
@@ -133,15 +133,15 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Remove(int id)
     {
-        logger.LogDebug("Initiated removal of User {Id}.", id);
+        logger.LogInformation("Initiated removal of User {Id}.", id);
         User? user = await repository.GetAsync(id);
         if (user == null)
         {
-            logger.LogDebug("User {Id} does not exist.", id);
+            logger.LogInformation("User {Id} does not exist.", id);
             return NotFound();
         }
         await repository.RemoveAsync(user);
-        logger.LogDebug("Removed User {Id}", id);
+        logger.LogInformation("Removed User {Id}", id);
         return Ok();
     }
 
@@ -150,16 +150,16 @@ public class UserController(IUserRepository repository, IMapper mapper, IValidat
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> RemoveAll()
     {
-        logger.LogDebug("Initiated wipe of User table.");
+        logger.LogInformation("Initiated wipe of User table.");
         if (global.AllowDbWipe)
         {
             await repository.RemoveAllAsync();
-            logger.LogDebug("User table cleared.");
+            logger.LogInformation("User table cleared.");
             return Ok();
         }
         else
         {
-            logger.LogDebug("Wipe denied.");
+            logger.LogInformation("Wipe denied.");
             return StatusCode(403);
         }
     }
