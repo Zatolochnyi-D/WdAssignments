@@ -16,7 +16,7 @@ namespace MyndMapper.Controllers;
 
 [ApiController]
 [Route("canvases/")]
-public class CanvasController(ICanvasRepository repository, IUserRepository userRepository, IMapper mapper, IValidator<CanvasPostDto> postValidator, IValidator<CanvasPutDto> putValidator, IOptions<Global> options, IDistributedCache cache) : ControllerBase
+public class CanvasController(ICanvasRepository repository, IUserRepository userRepository, IMapper mapper, IValidator<CanvasPostDto> postValidator, IValidator<CanvasPutDto> putValidator, IOptions<Global> options, IDistributedCache cache, ILogger<CanvasController> logger) : ControllerBase
 {
     private const string AllCanvasesCacheKey = "GetAllCanvases";
 
@@ -27,22 +27,27 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Get(int id)
     {
+        logger.LogDebug("Initiated get of Canvas {Id}.", id);
         byte[]? cacheData = await cache.GetAsync(AllCanvasesCacheKey);
         CanvasGetDto? getDto;
         if (cacheData != null)
         {
             IEnumerable<CanvasGetDto> getDtos = JsonSerializer.Deserialize<IEnumerable<CanvasGetDto>>(Encoding.UTF8.GetString(cacheData))!;
             getDto = getDtos.FirstOrDefault(x => x.Id == id);
+            logger.LogDebug("Looked up Canvas {Id} in cache.", id);
         }
         else
         {
             getDto = mapper.Map<CanvasGetDto>(await repository.GetWithUsersAsync(id));
+            logger.LogDebug("Looked up Canvas {Id} in DB.", id);
         }
 
         if (getDto == null)
         {
+            logger.LogDebug("Canvas {Id} not found.", id);
             return NotFound();
         }
+        logger.LogDebug("Canvas {Id} found and returned.", id);
         return Ok(getDto);
     }
 
@@ -50,11 +55,13 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetAll()
     {
+        logger.LogDebug("Initiated get of all Canvases.");
         byte[]? cacheData = await cache.GetAsync(AllCanvasesCacheKey);
         IEnumerable<CanvasGetDto> getDtos;
         if (cacheData != null)
         {
             getDtos = JsonSerializer.Deserialize<IEnumerable<CanvasGetDto>>(Encoding.UTF8.GetString(cacheData))!;
+            logger.LogDebug("Looked up all Canvases in cache.");
         }
         else
         {
@@ -66,7 +73,9 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(global.CacheLifespanSeconds),
             });
+            logger.LogDebug("Looked up all Canvases in DB.");
         }
+        logger.LogDebug("Canvases gathered and returned.");
         return Ok(getDtos);
     }
 
@@ -75,6 +84,7 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Create(CanvasPostDto postDto)
     {
+        logger.LogDebug("Initiated creation of Canvas.");
         ValidationResult result = await postValidator.ValidateAsync(postDto);
         if (!result.IsValid)
         {
@@ -84,6 +94,7 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
                 combinedErrorMessage += error.ErrorMessage;
                 combinedErrorMessage += "\n";
             }
+            logger.LogDebug("Canvas is not created due to incorrect input data:\n{errorMessage}", combinedErrorMessage);
             return BadRequest(combinedErrorMessage);
         }
 
@@ -93,6 +104,7 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
         canvas.CreationDate = DateTime.Now;
         owner!.CreatedCanvases.Add(canvas);
         await repository.AddAsync(canvas);
+        logger.LogDebug("Canvas {Id} created.", canvas.Id);
         return Ok();
     }
 
@@ -101,14 +113,23 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Edit(CanvasPutDto putDto)
     {
+        logger.LogDebug("Initiated modification of Canvas {Id}.", putDto.Id);
         ValidationResult result = await putValidator.ValidateAsync(putDto);
         if (!result.IsValid)
         {
+            string combinedErrorMessage = "";
+            foreach (var error in result.Errors)
+            {
+                combinedErrorMessage += error.ErrorMessage;
+                combinedErrorMessage += "\n";
+            }
+            logger.LogDebug("Cnvas is not modified due to incorrect input data:\n{errorMessage}", combinedErrorMessage);
             return BadRequest(result.Errors[0].ErrorMessage);
         }
 
         Canvas canvas = mapper.Map<Canvas>(putDto);
         await repository.EditAsync(canvas);
+        logger.LogDebug("Canvas {Id} modified.", putDto.Id);
         return Ok();
     }
 
@@ -117,12 +138,15 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Remove(int id)
     {
+        logger.LogDebug("Initiated removal of Canvas {Id}.", id);
         Canvas? canvas = await repository.GetAsync(id);
         if (canvas == null)
         {
+            logger.LogDebug("Canvas {Id} does not exist.", id);
             return NotFound();
         }
         await repository.RemoveAsync(canvas);
+        logger.LogDebug("Removed Canvas {Id}.", id);
         return Ok();
     }
 
@@ -131,13 +155,16 @@ public class CanvasController(ICanvasRepository repository, IUserRepository user
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> RemoveAll()
     {
+        logger.LogDebug("Initiated wipe of Canvas table.");
         if (global.AllowDbWipe)
         {
             await repository.RemoveAllAsync();
+            logger.LogDebug("Canvas table cleared.");
             return Ok();
         }
         else
         {
+            logger.LogDebug("Wipe denied.");
             return StatusCode(403);
         }
     }
