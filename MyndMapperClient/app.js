@@ -1,8 +1,13 @@
+// Endpoints
 const ORIGIN = "http://localhost:5110/";
 const USER_ENDPOINT = "users/";
 const CANVAS_ENDPOINT = "canvases/";
-const GET_ALL = "get/all"
-const POST = "create/"
+const GET = "get/";
+const GET_ALL = "get/all";
+const POST = "create/";
+const PUT = "edit/";
+const DELETE = "delete/";
+const DELETE_ALL = "delete/all";
 
 // DTOs
 class UserGetDto {
@@ -38,9 +43,6 @@ class CanvasPutDto {
     name
 }
 
-let button = document.getElementById("test-button");
-button.addEventListener("click", postCanvas)
-
 async function getAll() {
     let canvasGetAllUrl = ORIGIN + CANVAS_ENDPOINT + GET_ALL;
     let response = await fetch(canvasGetAllUrl)
@@ -75,3 +77,6 @@ async function postCanvas() {
     })
     console.log(response);
 }
+
+let button = document.getElementById("test-button");
+button.addEventListener("click", postCanvas)
