@@ -11,6 +11,15 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        string customCorsPolicyName = "allowAllOrigins";
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: customCorsPolicyName,
+                              policy =>
+                              {
+                                  policy.AllowAnyOrigin();
+                              });
+        });
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -30,6 +39,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseCors(customCorsPolicyName);
         app.UseAuthorization();
         app.MapControllers();
 
