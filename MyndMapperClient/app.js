@@ -4,18 +4,35 @@ const CANVAS_ENDPOINT = "canvases/";
 const GET_ALL = "get/all"
 const POST = "create/"
 
+// DTOs
+class UserGetDto {
+    id
+    name
+    email
+    password
+    createdCanvases
+}
+class UserPostDto {
+    name
+    email
+    password
+}
+class UserPutDto {
+    id
+    name
+    email
+    password
+}
 class CanvasGetDto {
     id
     name
     creationDate
     ownerId
 }
-
 class CanvasPostDto {
     ownerId
     name
 }
-
 class CanvasPutDto {
     id
     name
