@@ -9,7 +9,7 @@ const PUT = "edit/";
 const DELETE = "delete/";
 const DELETE_ALL = "delete/all";
 
-// DTOs
+//#region DTOs
 class UserGetDto {
     id
     name
@@ -42,6 +42,61 @@ class CanvasPutDto {
     id
     name
 }
+//#endregion
+
+//#region Methods
+//#region User
+async function getUser() {
+
+}
+
+async function getAllUsers() {
+
+}
+
+async function postUser() {
+
+}
+
+async function putUser() {
+
+}
+
+async function deleteUser() {
+
+}
+
+async function deleteAllUsers() {
+
+}
+//#endregion
+
+//#region Canvas
+async function getCanvas() {
+
+}
+
+async function getAllCanvases() {
+
+}
+
+async function postCanvas() {
+
+}
+
+async function putCanvas() {
+
+}
+
+async function deleteCanvas() {
+
+}
+
+async function deleteAllCanvases() {
+
+}
+//#endregion
+//#endregion
 
 async function getAll() {
     let canvasGetAllUrl = ORIGIN + CANVAS_ENDPOINT + GET_ALL;
