@@ -131,5 +131,5 @@ async function postCanvas() {
     console.log(response);
 }
 
-let button = document.getElementById("test-button");
-button.addEventListener("click", postCanvas)
+// let button = document.getElementById("test-button");
+// button.addEventListener("click", postCanvas)
