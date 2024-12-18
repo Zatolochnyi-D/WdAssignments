@@ -47,53 +47,53 @@ class CanvasPutDto {
 //#region Methods
 //#region User
 async function getUser() {
-
+    let response = await fetch(ORIGIN + USER_ENDPOINT + GET);
 }
 
 async function getAllUsers() {
-
+    let response = await fetch(ORIGIN + USER_ENDPOINT + GET_ALL);
 }
 
 async function postUser() {
-
+    let response = await fetch(ORIGIN + USER_ENDPOINT + POST);
 }
 
 async function putUser() {
-
+    let response = await fetch(ORIGIN + USER_ENDPOINT + PUT);
 }
 
 async function deleteUser() {
-
+    let response = await fetch(ORIGIN + USER_ENDPOINT + DELETE);
 }
 
 async function deleteAllUsers() {
-
+    let response = await fetch(ORIGIN + USER_ENDPOINT + DELETE_ALL);
 }
 //#endregion
 
 //#region Canvas
 async function getCanvas() {
-
+    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + GET);
 }
 
 async function getAllCanvases() {
-
+    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + GET_ALL);
 }
 
 async function postCanvas() {
-
+    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + POST);
 }
 
 async function putCanvas() {
-
+    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + PUT);
 }
 
 async function deleteCanvas() {
-
+    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + DELETE);
 }
 
 async function deleteAllCanvases() {
-
+    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + DELETE_ALL);
 }
 //#endregion
 //#endregion
