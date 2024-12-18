@@ -17,7 +17,7 @@ public class Program
             options.AddPolicy(name: customCorsPolicyName,
                               policy =>
                               {
-                                  policy.AllowAnyOrigin();
+                                  policy.WithOrigins("null");
                               });
         });
         builder.Services.AddControllers();
