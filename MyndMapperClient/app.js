@@ -54,19 +54,41 @@ function extractDict(event) {
     return Object.fromEntries(formData);
 }
 
+function clearNode(target) {
+    target.innerHTML = "";
+}
+
+function addText(target, text) {
+    let p = document.createElement('p');
+    p.innerHTML = text;
+    target.appendChild(p);
+}
+
+function addList(target, elements) {
+    let ul = document.createElement('ul')
+    for (i in elements) {
+        let li = document.createElement('li');
+        li.innerHTML = elements[i];
+        ul.appendChild(li);
+    }
+    target.appendChild(ul);
+}
+
 //#region UserMethods
 async function getUser(formData) {
+    clearNode(userGetResponse);
     let targetId = formData["id"];
     let response = await fetch(ORIGIN + USER_ENDPOINT + GET + targetId);
 
     if (!response.ok) {
-        console.log("Something wrong happened");
+        addText(userGetResponse, "User not found.");
         return;
     }
 
     let data = await response.json();
-    let convertedData = as(UserGetDto, data);
-    console.log(convertedData);
+    let user = as(UserGetDto, data);
+    addText(userGetResponse, "User info: ");
+    addList(userGetResponse, ["id: " + user.id, "name: " + user.name, "email: " + user.email, "password: " + user.password, "created canvases: " + user.createdCanvases]);
 }
 
 async function getAllUsers() {
@@ -159,16 +181,17 @@ async function deleteAllUsers() {
 
 //#region CanvasMethods
 async function getCanvas() {
+    
     let response = await fetch(ORIGIN + CANVAS_ENDPOINT + GET);
 
     if (!response.ok) {
-        console.log("Something wrong happened");
+        
         return;
     }
 
     let data = await response.json();
     let convertedData = as(CanvasGetDto, data);
-    console.log(convertedData);
+    addText(userGetResponse, "User:");
 }
 
 async function getAllCanvases() {
@@ -262,5 +285,5 @@ async function deleteAllCanvases() {
 let userGetForm = document.getElementById("user-get-form");
 userGetForm.addEventListener("submit", function(e) { getUser(extractDict(e)) })
 
-// let userResponse = document.getElementById("user-response");
-// userResponse.innerHTML = "";
+let userGetResponse = document.getElementById("user-get-response");
+clearNode(userGetResponse);
