@@ -48,18 +48,16 @@ function as(type, object) {
     return Object.assign(new type, object);
 }
 
+function extractDict(event) {
+    event.preventDefault();
+    formData = new FormData(event.target);
+    return Object.fromEntries(formData);
+}
+
 //#region UserMethods
-async function getUser(e) {
-    e.preventDefault();
-    formData = new FormData(e.target);
-    formProps = Object.fromEntries(formData);
-    console.log(formData);
-    console.log(formProps);
-    for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-    }
-    return;
-    let response = await fetch(ORIGIN + USER_ENDPOINT + GET);
+async function getUser(formData) {
+    let targetId = formData["id"];
+    let response = await fetch(ORIGIN + USER_ENDPOINT + GET + targetId);
 
     if (!response.ok) {
         console.log("Something wrong happened");
@@ -261,14 +259,8 @@ async function deleteAllCanvases() {
 }
 //#endregion
 
-// let userGetInput = document.getElementById("user-get-input");
-// let userGetSubmit = document.getElementById("user-get-submit");
-// userGetSubmit.addEventListener("click", getUser)
-
 let userGetForm = document.getElementById("user-get-form");
-userGetForm.addEventListener("submit", getUser)
+userGetForm.addEventListener("submit", function(e) { getUser(extractDict(e)) })
 
 // let userResponse = document.getElementById("user-response");
 // userResponse.innerHTML = "";
-
-console.log("huh?");
