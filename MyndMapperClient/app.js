@@ -44,92 +44,213 @@ class CanvasPutDto {
 }
 //#endregion
 
+function as(type, object) {
+    return Object.assign(new type, object);
+}
+
 //#region UserMethods
 async function getUser() {
-    let response = await fetch(ORIGIN + USER_ENDPOINT + GET);
+    let response = await fetch(ORIGIN + USER_ENDPOINT + GET + 10 /*user id*/);
+
+    if (!response.ok) {
+        console.log("Something wrong happened");
+        return;
+    }
+
+    let data = await response.json();
+    let convertedData = as(UserGetDto, data);
+    console.log(convertedData);
 }
 
 async function getAllUsers() {
     let response = await fetch(ORIGIN + USER_ENDPOINT + GET_ALL);
+
+    if (!response.ok) {
+        console.log("Something wrong happened");
+        return;
+    }
+
+    let data = await response.json();
+    let convertedData = [];
+    for (i in data) {
+        convertedData.push(as(UserGetDto, data[i]));
+    }
+    console.log(convertedData);
 }
 
 async function postUser() {
-    let response = await fetch(ORIGIN + USER_ENDPOINT + POST);
+    let body = new UserPostDto;
+    body.name = "";
+    body.email = "elderOne@wizards.mgc";
+    body.password = "foolmoon";
+
+    let response = await fetch(ORIGIN + USER_ENDPOINT + POST, {
+        method: "post",
+        headers: {
+            'Accept': '*/*',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+        let data = await response.text();
+        console.log(data);
+        return;
+    }
+
+    console.log("Done");
 }
 
 async function putUser() {
-    let response = await fetch(ORIGIN + USER_ENDPOINT + PUT);
+    let body = new UserPutDto;
+    body.id = 12;
+    body.name = "SJDFKJEFJKWEF";
+    body.email = "FSLDNFDSnlf@wizards.mgc";
+    body.password = "SfKLWEfukwefkwEKFJ";
+
+    let response = await fetch(ORIGIN + USER_ENDPOINT + PUT, {
+        method: "put",
+        headers: {
+            'Accept': '*/*',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+        let data = await response.text();
+        console.log(data);
+        return;
+    }
+
+    console.log("Done");
 }
 
 async function deleteUser() {
-    let response = await fetch(ORIGIN + USER_ENDPOINT + DELETE);
+    let response = await fetch(ORIGIN + USER_ENDPOINT + DELETE + 12 /*user id*/, {
+        method: "delete"
+    });
+
+    if (!response.ok) {
+        console.log("Something wrong happened");
+        return;
+    }
 }
 
 async function deleteAllUsers() {
-    let response = await fetch(ORIGIN + USER_ENDPOINT + DELETE_ALL);
+    let response = await fetch(ORIGIN + USER_ENDPOINT + DELETE_ALL, {
+        method: "delete"
+    });
+
+    if (!response.ok) {
+        console.log("Something wrong happened");
+        return;
+    }
 }
 //#endregion
 
 //#region CanvasMethods
 async function getCanvas() {
     let response = await fetch(ORIGIN + CANVAS_ENDPOINT + GET);
+
+    if (!response.ok) {
+        console.log("Something wrong happened");
+        return;
+    }
+
+    let data = await response.json();
+    let convertedData = as(CanvasGetDto, data);
+    console.log(convertedData);
 }
 
 async function getAllCanvases() {
     let response = await fetch(ORIGIN + CANVAS_ENDPOINT + GET_ALL);
+
+    if (!response.ok) {
+        console.log("Something wrong happened");
+        return;
+    }
+
+    let data = await response.json();
+    let convertedData = [];
+    for (i in data) {
+        convertedData.push(as(CanvasGetDto, data[i]));
+    }
+    console.log(convertedData);
 }
 
 async function postCanvas() {
-    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + POST);
+    let body = new UserPostDto;
+    body.name = "";
+    body.email = "elderOne@wizards.mgc";
+    body.password = "foolmoon";
+
+    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + POST, {
+        method: "post",
+        headers: {
+            'Accept': '*/*',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+        let data = await response.text();
+        console.log(data);
+        return;
+    }
+
+    console.log("Done");
 }
 
 async function putCanvas() {
-    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + PUT);
+    let body = new UserPutDto;
+    body.id = 12;
+    body.name = "SJDFKJEFJKWEF";
+    body.email = "FSLDNFDSnlf@wizards.mgc";
+    body.password = "SfKLWEfukwefkwEKFJ";
+
+    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + PUT, {
+        method: "put",
+        headers: {
+            'Accept': '*/*',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+        let data = await response.text();
+        console.log(data);
+        return;
+    }
+
+    console.log("Done");
 }
 
 async function deleteCanvas() {
-    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + DELETE);
+    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + DELETE, {
+        method: "delete"
+    });
+
+    if (!response.ok) {
+        console.log("Something wrong happened");
+        return;
+    }
 }
 
 async function deleteAllCanvases() {
-    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + DELETE_ALL);
+    let response = await fetch(ORIGIN + CANVAS_ENDPOINT + DELETE_ALL, {
+        method: "delete"
+    });
+
+    if (!response.ok) {
+        console.log("Something wrong happened");
+        return;
+    }
 }
 //#endregion
 
-async function getAll() {
-    let canvasGetAllUrl = ORIGIN + CANVAS_ENDPOINT + GET_ALL;
-    let response = await fetch(canvasGetAllUrl)
-    console.log(response);
-    let resp = await response.json()
-    console.log(resp);
-    let obj = Object.assign(new CanvasGetDto, resp[0]);
-    console.log(obj);
-    // if (response.ok) {
-    //     let data = await response.json();
-    //     console.log(data);
-    //     // let array = [];
-    //     // for (i = 0; i < data.lenght; i++) {
-    //     //     array.push(Object.assign(new CanvasGetDto, JSON.parse(data[i])))
-    //     // }
-    // }
-}
-
-async function postCanvas() {
-    let canvasPostUrl = ORIGIN + CANVAS_ENDPOINT + POST;
-    let post = new CanvasPostDto()
-    post.name = "lsdlgkdfg"
-    post.ownerId = 10;
-    console.log(JSON.stringify(post));
-    let response = await fetch(canvasPostUrl, {
-        method: "post",
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(post),
-    })
-    console.log(response);
-}
-
-// let button = document.getElementById("test-button");
-// button.addEventListener("click", postCanvas)
+let button = document.getElementById("1");
+button.addEventListener("click", deleteUser)
