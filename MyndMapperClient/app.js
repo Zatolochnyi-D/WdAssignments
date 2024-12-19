@@ -49,8 +49,17 @@ function as(type, object) {
 }
 
 //#region UserMethods
-async function getUser() {
-    let response = await fetch(ORIGIN + USER_ENDPOINT + GET + 10 /*user id*/);
+async function getUser(e) {
+    e.preventDefault();
+    formData = new FormData(e.target);
+    formProps = Object.fromEntries(formData);
+    console.log(formData);
+    console.log(formProps);
+    for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
+    return;
+    let response = await fetch(ORIGIN + USER_ENDPOINT + GET);
 
     if (!response.ok) {
         console.log("Something wrong happened");
@@ -252,5 +261,14 @@ async function deleteAllCanvases() {
 }
 //#endregion
 
-let button = document.getElementById("1");
-button.addEventListener("click", deleteUser)
+// let userGetInput = document.getElementById("user-get-input");
+// let userGetSubmit = document.getElementById("user-get-submit");
+// userGetSubmit.addEventListener("click", getUser)
+
+let userGetForm = document.getElementById("user-get-form");
+userGetForm.addEventListener("submit", getUser)
+
+// let userResponse = document.getElementById("user-response");
+// userResponse.innerHTML = "";
+
+console.log("huh?");

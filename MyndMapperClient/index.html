@@ -1,11 +1,36 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <style type="text/css">
+            html, body {
+                height: 100%;
+                margin: 0;
+            }
+            .bg {
+                width: 100%;
+                min-height: 100%;
+                margin-top: 5%;
+                margin-left: 15%;
+                margin-right: 15%;
+            }
+        </style>
     </head>
 
     <body>
-        <button id="1">user get</button>
+        <div class="bg">
+            <p>Find user by id.</p>
+            <form autocomplete="off" id="user-get-form">
+                <div>
+                    <label for="user-get-input">Select user to find: </label><input type="number" id="user-get-input" name = "user-get-input" required  min="0"/>
+                </div>
+                <button type="submit">Find</button>
+            </form>
+            <div id="user-get-response"></div>
+            <!-- <p hidden="true" id="user-get-">Not found</p>
+            <ul hidden="true">
+            </ul> -->
+        </div>
+        <!-- <button id="1">user get</button>
         <button id="2">user get all</button>
         <button id="3">user post</button>
         <button id="4">user put</button>
@@ -16,7 +41,7 @@
         <button id="9">canvas post</button>
         <button id="10">canvas put</button>
         <button id="11">canvas delete</button>
-        <button id="12">canvas delete all</button>
-        <script src="app.js"></script>
+        <button id="12">canvas delete all</button> -->
+        <script src="app.js"></script> 
     </body>
 </html>
