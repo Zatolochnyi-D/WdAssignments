@@ -18,27 +18,147 @@
 
     <body>
         <div class="bg">
-            <p>Find user by id.</p>
-            <form autocomplete="off" id="user-get-form">
+            <div style="float: left; width: 50%; height: 100%;">
                 <div>
-                    <label for="user-get-input">Select user to find: </label><input type="number" id="user-get-input" name = "id" required  min="0"/>
+                    <p><strong>Find user by id.</strong></p>
+                    <form autocomplete="off" id="user-get-form">
+                        <div>
+                            <label for="user-get-input">Select user to find: </label><input type="number" id="user-get-input" name="id" required min="0" />
+                        </div>
+                        <button type="submit">Find</button>
+                    </form>
+                    <div id="user-get-response"></div>
                 </div>
-                <button type="submit">Find</button>
-            </form>
-            <div id="user-get-response"></div>
+                
+                <div>
+                    <p><strong>Get all users.</strong></p>
+                    <button id="user-get-all-button">Get all</button>
+                    <div id="user-get-all-response"></div>
+                </div>
+                
+                <div>
+                    <p><strong>Create new user.</strong></p>
+                    <form autocomplete="off" id="user-post-form">
+                        <div>
+                            <label for="user-post-name">User name: </label><input type="text" id="user-post-name" name="name" required />
+                        </div>
+                        <div>
+                            <label for="user-post-email">User email: </label><input type="email" id="user-post-email" name="email" required />
+                        </div>
+                        <div>
+                            <label for="user-post-password">User password: </label><input type="password" id="user-post-password" name="password" required />
+                        </div>
+                        <button type="submit">Create</button>
+                    </form>
+                    <div id="user-post-response"></div>
+                </div>
+                
+                <div>
+                    <p><strong>Edit user.</strong></p>
+                    <form autocomplete="off" id="user-put-form">
+                        <div>
+                            <label for="user-put-id">User id: </label><input type="number" id="user-put-id" name="id" required min="0" />
+                        </div>
+                        <div>
+                            <label for="user-put-name">User name: </label><input type="text" id="user-put-name" name="name" />
+                        </div>
+                        <div>
+                            <label for="user-put-email">User email: </label><input type="email" id="user-put-email" name="email" />
+                        </div>
+                        <div>
+                            <label for="user-put-password">User password: </label><input type="password" id="user-put-password" name="password" />
+                        </div>
+                        <button type="submit">Edit</button>
+                    </form>
+                    <div id="user-put-response"></div>
+                </div>
+                
+                <div>
+                    <p><strong>Delete user.</strong></p>
+                    <form autocomplete="off" id="user-delete-form">
+                        <div>
+                            <label for="user-put-id">User id: </label><input type="number" id="user-put-id" name="id" required min="0" />
+                        </div>
+                        <button type="submit">Delete</button>
+                    </form>
+                    <div id="user-delete-response"></div>
+                </div>
+            </div>
+            <div style="float: left; width: 50%; height: 100%;">
+                <div>
+                    <p><strong>Find user by id.</strong></p>
+                    <form autocomplete="off" id="canvas-get-form">
+                        <div>
+                            <label for="canvas-get-input">Select user to find: </label><input type="number" id="canvas-get-input" name="id"
+                                required min="0" />
+                        </div>
+                        <button type="submit">Find</button>
+                    </form>
+                    <div id="canvas-get-response"></div>
+                </div>
+                
+                <div>
+                    <p><strong>Get all users.</strong></p>
+                    <button id="canvas-get-all-button">Get all</button>
+                    <div id="canvas-get-all-response"></div>
+                </div>
+                
+                <div>
+                    <p><strong>Create new user.</strong></p>
+                    <form autocomplete="off" id="canvas-post-form">
+                        <div>
+                            <label for="canvas-post-name">User name: </label><input type="text" id="canvas-post-name" name="name"
+                                required />
+                        </div>
+                        <div>
+                            <label for="canvas-post-email">User email: </label><input type="email" id="canvas-post-email" name="email"
+                                required />
+                        </div>
+                        <div>
+                            <label for="canvas-post-password">User password: </label><input type="password" id="canvas-post-password"
+                                name="password" required />
+                        </div>
+                        <button type="submit">Create</button>
+                    </form>
+                    <div id="canvas-post-response"></div>
+                </div>
+                
+                <div>
+                    <p><strong>Edit user.</strong></p>
+                    <form autocomplete="off" id="canvas-put-form">
+                        <div>
+                            <label for="canvas-put-id">User id: </label><input type="number" id="canvas-put-id" name="id" required
+                                min="0" />
+                        </div>
+                        <div>
+                            <label for="canvas-put-name">User name: </label><input type="text" id="canvas-put-name" name="name" />
+                        </div>
+                        <div>
+                            <label for="canvas-put-email">User email: </label><input type="email" id="canvas-put-email" name="email" />
+                        </div>
+                        <div>
+                            <label for="canvas-put-password">User password: </label><input type="password" id="canvas-put-password"
+                                name="password" />
+                        </div>
+                        <button type="submit">Edit</button>
+                    </form>
+                    <div id="canvas-put-response"></div>
+                </div>
+                
+                <div>
+                    <p><strong>Delete user.</strong></p>
+                    <form autocomplete="off" id="canvas-delete-form">
+                        <div>
+                            <label for="canvas-put-id">User id: </label><input type="number" id="canvas-put-id" name="id" required
+                                min="0" />
+                        </div>
+                        <button type="submit">Delete</button>
+                    </form>
+                    <div id="canvas-delete-response"></div>
+                </div>
+            </div>
         </div>
-        <!-- <button id="1">user get</button>
-        <button id="2">user get all</button>
-        <button id="3">user post</button>
-        <button id="4">user put</button>
-        <button id="5">user delete</button>
-        <button id="6">user delete all</button>
-        <button id="7">canvas get</button>
-        <button id="8">canvas get all</button>
-        <button id="9">canvas post</button>
-        <button id="10">canvas put</button>
-        <button id="11">canvas delete</button>
-        <button id="12">canvas delete all</button> -->
+        
         <script src="app.js"></script> 
     </body>
 </html>
