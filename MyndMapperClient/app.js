@@ -324,7 +324,7 @@ async function putCanvas(formData) {
     }
 
     addText(canvasPutResponse, "Canvas edited successfully.");
-    addClearButton(userPutResponse);
+    addClearButton(canvasPutResponse);
 }
 
 async function deleteCanvas(formData) {
