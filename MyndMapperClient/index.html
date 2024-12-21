@@ -77,19 +77,26 @@
                     <p><strong>Delete user.</strong></p>
                     <form autocomplete="off" id="user-delete-form">
                         <div>
-                            <label for="user-put-id">User id: </label><input type="number" id="user-put-id" name="id" required min="0" />
+                            <label for="user-delete-id">User id: </label><input type="number" id="user-delete-id" name="id" required min="0" />
                         </div>
                         <button type="submit">Delete</button>
                     </form>
                     <div id="user-delete-response"></div>
                 </div>
+
+                <div>
+                    <p><strong>Delete all users.</strong></p>
+                    <button id="user-delete-all-button">Delete all</button>
+                    <div id="user-delete-all-response"></div>
+                </div>
             </div>
+
             <div style="float: left; width: 50%; height: 100%;">
                 <div>
-                    <p><strong>Find user by id.</strong></p>
+                    <p><strong>Find canvas by id.</strong></p>
                     <form autocomplete="off" id="canvas-get-form">
                         <div>
-                            <label for="canvas-get-input">Select user to find: </label><input type="number" id="canvas-get-input" name="id"
+                            <label for="canvas-get-input">Select canvas to find: </label><input type="number" id="canvas-get-input" name="id"
                                 required min="0" />
                         </div>
                         <button type="submit">Find</button>
@@ -98,25 +105,21 @@
                 </div>
                 
                 <div>
-                    <p><strong>Get all users.</strong></p>
+                    <p><strong>Get all canvases.</strong></p>
                     <button id="canvas-get-all-button">Get all</button>
                     <div id="canvas-get-all-response"></div>
                 </div>
                 
                 <div>
-                    <p><strong>Create new user.</strong></p>
+                    <p><strong>Create new canvas.</strong></p>
                     <form autocomplete="off" id="canvas-post-form">
                         <div>
-                            <label for="canvas-post-name">User name: </label><input type="text" id="canvas-post-name" name="name"
-                                required />
+                            <label for="canvas-post-name">Creator id: </label><input type="number" id="canvas-post-name" name="id"
+                                required min="0"/>
                         </div>
                         <div>
-                            <label for="canvas-post-email">User email: </label><input type="email" id="canvas-post-email" name="email"
+                            <label for="canvas-post-email">Canvas name: </label><input type="text" id="canvas-post-email" name="name"
                                 required />
-                        </div>
-                        <div>
-                            <label for="canvas-post-password">User password: </label><input type="password" id="canvas-post-password"
-                                name="password" required />
                         </div>
                         <button type="submit">Create</button>
                     </form>
@@ -124,21 +127,14 @@
                 </div>
                 
                 <div>
-                    <p><strong>Edit user.</strong></p>
+                    <p><strong>Edit canvas.</strong></p>
                     <form autocomplete="off" id="canvas-put-form">
                         <div>
-                            <label for="canvas-put-id">User id: </label><input type="number" id="canvas-put-id" name="id" required
+                            <label for="canvas-put-id">Canvas id: </label><input type="number" id="canvas-put-id" name="id" required
                                 min="0" />
                         </div>
                         <div>
-                            <label for="canvas-put-name">User name: </label><input type="text" id="canvas-put-name" name="name" />
-                        </div>
-                        <div>
-                            <label for="canvas-put-email">User email: </label><input type="email" id="canvas-put-email" name="email" />
-                        </div>
-                        <div>
-                            <label for="canvas-put-password">User password: </label><input type="password" id="canvas-put-password"
-                                name="password" />
+                            <label for="canvas-put-name">Canvas name: </label><input type="text" id="canvas-put-name" name="name" />
                         </div>
                         <button type="submit">Edit</button>
                     </form>
@@ -146,15 +142,21 @@
                 </div>
                 
                 <div>
-                    <p><strong>Delete user.</strong></p>
+                    <p><strong>Delete canvas.</strong></p>
                     <form autocomplete="off" id="canvas-delete-form">
                         <div>
-                            <label for="canvas-put-id">User id: </label><input type="number" id="canvas-put-id" name="id" required
+                            <label for="canvas-delete-id">Canvas id: </label><input type="number" id="canvas-delete-id" name="id" required
                                 min="0" />
                         </div>
                         <button type="submit">Delete</button>
                     </form>
                     <div id="canvas-delete-response"></div>
+                </div>
+
+                <div>
+                    <p><strong>Delete all canvases.</strong></p>
+                    <button id="canvas-delete-all-button">Delete all</button>
+                    <div id="canvas-delete-all-response"></div>
                 </div>
             </div>
         </div>
